@@ -12,7 +12,7 @@ import {
     Sheet,
     SheetContent,
     SheetDescription,
-    SheetHeader,
+    SheetNavbar,
     SheetTitle,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -160,10 +160,10 @@ const Sidebar = React.forwardRef(
                         style={{ "--sidebar-width": SIDEBAR_WIDTH_MOBILE }}
                         side={side}
                     >
-                        <SheetHeader className="sr-only">
+                        <SheetNavbar className="sr-only">
                             <SheetTitle>Sidebar</SheetTitle>
                             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
-                        </SheetHeader>
+                        </SheetNavbar>
                         <div className="flex h-full w-full flex-col">{children}</div>
                     </SheetContent>
                 </Sheet>
@@ -288,10 +288,10 @@ const SidebarInput = React.forwardRef(({ className, ...props }, ref) => (
 ));
 SidebarInput.displayName = "SidebarInput";
 
-const SidebarHeader = React.forwardRef(({ className, ...props }, ref) => (
+const SidebarNavbar = React.forwardRef(({ className, ...props }, ref) => (
     <div ref={ref} data-sidebar="header" className={cn("flex flex-col gap-2 p-2", className)} {...props} />
 ));
-SidebarHeader.displayName = "SidebarHeader";
+SidebarNavbar.displayName = "SidebarNavbar";
 
 const SidebarFooter = React.forwardRef(({ className, ...props }, ref) => (
     <div ref={ref} data-sidebar="footer" className={cn("flex flex-col gap-2 p-2", className)} {...props} />
@@ -544,7 +544,7 @@ export {
     SidebarGroupAction,
     SidebarGroupContent,
     SidebarGroupLabel,
-    SidebarHeader,
+    SidebarNavbar,
     SidebarInput,
     SidebarInset,
     SidebarMenu,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Header } from "../components/site/Header";
+import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
 
 export default function About() {
@@ -12,14 +12,14 @@ export default function About() {
     useEffect(() => {
         // fetch('/api/settings').then(res => res.json()).then(setSettings);
     }, []);
-    
-     useEffect(() => {
-            document.title = "About — NepalTrip";
-        }, []);
+
+    useEffect(() => {
+        document.title = "About — NepalTrip";
+    }, []);
 
     return (
         <div className="min-h-screen">
-            <Header brand={settings.brand_name} />
+            <Navbar brand={settings.brand_name} />
             <section className="mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8">
                 <p className="font-serif text-sm uppercase tracking-widest text-accent">Who we are</p>
                 <h1 className="mt-2 font-serif text-4xl sm:text-5xl">{settings.about_title}</h1>

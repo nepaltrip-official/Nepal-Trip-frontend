@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react";
-import { Header } from "@/components/site/Header";
+import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 
 export default function Testimonials() {
@@ -35,7 +35,7 @@ export default function Testimonials() {
 
     return (
         <div className="min-h-screen">
-            <Header brand={settings.brand_name} />
+            <Navbar brand={settings.brand_name} />
 
             <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
                 <p className="font-serif text-sm uppercase tracking-widest text-accent">Kind words</p>

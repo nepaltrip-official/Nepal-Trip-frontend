@@ -57,10 +57,10 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, ..
 ));
 SheetContent.displayName = "SheetContent";
 
-const SheetHeader = ({ className, ...props }) => (
+const SheetNavbar = ({ className, ...props }) => (
     <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props} />
 );
-SheetHeader.displayName = "SheetHeader";
+SheetNavbar.displayName = "SheetNavbar";
 
 const SheetFooter = ({ className, ...props }) => (
     <div
@@ -95,7 +95,7 @@ export {
     SheetTrigger,
     SheetClose,
     SheetContent,
-    SheetHeader,
+    SheetNavbar,
     SheetFooter,
     SheetTitle,
     SheetDescription,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Header } from "../components/site/Header";
+import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
 import { PackageCard } from "../components/site/PackageCard";
 import { Input } from "../components/ui/input";
@@ -12,9 +12,9 @@ export default function Packages() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
 
-     useEffect(() => {
-            document.title = "Packages   — NepalTrip";
-        }, []);
+    useEffect(() => {
+        document.title = "Packages   — NepalTrip";
+    }, []);
 
     useEffect(() => {
         // 🌐 MERN Backend Logic: fetch('/api/packages').then...
@@ -49,7 +49,7 @@ export default function Packages() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background/50">
-            <Header brand={settings.brand_name} />
+            <Navbar brand={settings.brand_name} />
 
             <main className="flex-1">
                 <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">

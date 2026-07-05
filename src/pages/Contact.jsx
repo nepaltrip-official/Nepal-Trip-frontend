@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
-import { Header } from "@/components/site/Header";
+import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -62,7 +62,7 @@ export default function Contact() {
 
     return (
         <div className="min-h-screen">
-            <Header brand={settings.brand_name} />
+            <Navbar brand={settings.brand_name} />
             <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
                 <div className="grid gap-16 md:grid-cols-2">
 

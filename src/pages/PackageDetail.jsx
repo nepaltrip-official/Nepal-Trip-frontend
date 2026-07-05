@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Check, X, Clock, MapPin, ArrowLeft } from "lucide-react";
-import { Header } from "@/components/Header";
+import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { InquiryDialog } from "@/components/InquiryDialog";
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,7 @@ export default function PackageDetail() {
 
     return (
         <div className="min-h-screen">
-            <Header brand={settings.brand_name} />
+            <Navbar brand={settings.brand_name} />
 
             <section className="relative isolate overflow-hidden">
                 <img

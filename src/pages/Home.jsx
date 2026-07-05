@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Compass, Heart, ShieldCheck, Star } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { Header } from "../components/site/Header";
+import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
 import { PackageCard } from "../components/site/PackageCard";
 import { InquiryDialog } from "../components/site/InquiryDialog";
@@ -11,7 +11,7 @@ import { heroImage } from "../lib/images";
 export default function Home() {
     // Temporary fallback data to keep the UI beautiful before the backend connects
     const [settings, setSettings] = useState({
-        brand_name: "Wanderlust Travels",
+        brand_name: "Nepal Trip",
         tagline: "CURATED JOURNEYS, UNFORGETTABLE MEMORIES",
         hero_title: "Journeys crafted for the way you travel",
         hero_subtitle: "Handpicked tour packages across breathtaking destinations. Tell us where you dream of going — we handle the rest.",
@@ -25,14 +25,14 @@ export default function Home() {
         // fetch('/api/packages/featured').then(res => res.json()).then(setPackages);
         // fetch('/api/testimonials').then(res => res.json()).then(setTestimonials);
     }, []);
-    
+
     useEffect(() => {
         document.title = "NepalTrip";
     }, []);
 
     return (
         <div className="min-h-screen">
-            <Header brand={settings.brand_name} />
+            <Navbar brand={settings.brand_name} />
 
             {/* Hero */}
             <section className="relative isolate overflow-hidden">

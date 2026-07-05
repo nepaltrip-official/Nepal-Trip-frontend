@@ -11,10 +11,10 @@ const Card = React.forwardRef(({ className, ...props }, ref) => (
 ));
 Card.displayName = "Card";
 
-const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
+const CardNavbar = React.forwardRef(({ className, ...props }, ref) => (
     <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
 ));
-CardHeader.displayName = "CardHeader";
+CardNavbar.displayName = "CardNavbar";
 
 const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
     <div
@@ -40,4 +40,4 @@ const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
 ));
 CardFooter.displayName = "CardFooter";
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export { Card, CardNavbar, CardFooter, CardTitle, CardDescription, CardContent };

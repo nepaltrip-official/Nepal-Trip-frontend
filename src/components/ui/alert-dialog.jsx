@@ -35,10 +35,10 @@ const AlertDialogContent = React.forwardRef(({ className, ...props }, ref) => (
 ));
 AlertDialogContent.displayName = "AlertDialogContent";
 
-const AlertDialogHeader = ({ className, ...props }) => (
+const AlertDialogNavbar = ({ className, ...props }) => (
     <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props} />
 );
-AlertDialogHeader.displayName = "AlertDialogHeader";
+AlertDialogNavbar.displayName = "AlertDialogNavbar";
 
 const AlertDialogFooter = ({ className, ...props }) => (
     <div
@@ -86,7 +86,7 @@ export {
     AlertDialogOverlay,
     AlertDialogTrigger,
     AlertDialogContent,
-    AlertDialogHeader,
+    AlertDialogNavbar,
     AlertDialogFooter,
     AlertDialogTitle,
     AlertDialogDescription,

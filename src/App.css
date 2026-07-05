@@ -63,7 +63,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.24 0.03 160);
 
-  /* Deep forest teal (Buttons, Footer, Headers) */
+  /* Deep forest teal (Buttons, Footer, Navbars) */
   --primary: oklch(0.36 0.06 170);
   --primary-foreground: oklch(0.985 0.012 85);
 
