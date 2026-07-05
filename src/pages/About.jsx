@@ -12,6 +12,10 @@ export default function About() {
     useEffect(() => {
         // fetch('/api/settings').then(res => res.json()).then(setSettings);
     }, []);
+    
+     useEffect(() => {
+            document.title = "About — NepalTrip";
+        }, []);
 
     return (
         <div className="min-h-screen">

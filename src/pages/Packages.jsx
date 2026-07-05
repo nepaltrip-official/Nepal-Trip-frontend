@@ -12,6 +12,10 @@ export default function Packages() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
 
+     useEffect(() => {
+            document.title = "Packages   — NepalTrip";
+        }, []);
+
     useEffect(() => {
         // 🌐 MERN Backend Logic: fetch('/api/packages').then...
 

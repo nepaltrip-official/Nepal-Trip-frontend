@@ -38,9 +38,6 @@ export function Header({ brand = "Wanderlust Travels" }) {
                         </Link>
                     ))}
                     {/* Temporary placeholder until Auth Context is ready */}
-                    <Link to="/auth">
-                        <Button size="sm" variant="outline">Admin</Button>
-                    </Link>
                 </nav>
 
                 {/* Mobile Toggle */}

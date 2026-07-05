@@ -12,20 +12,6 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Packages = lazy(() => import('./pages/Packages'));
 const PackageDetail = lazy(() => import('./pages/PackageDetail'));
 const Testimonials = lazy(() => import('./pages/Testimonials'));
-const Auth = lazy(() => import('./pages/Auth'));
-
-// ==========================================
-// 2. Lazy Load Admin Pages
-// ==========================================
-const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
-const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
-const AdminPackages = lazy(() => import('./pages/admin/AdminPackages'));
-const AdminPackageEdit = lazy(() => import('./pages/admin/AdminPackageEdit'));
-const Inquiries = lazy(() => import('./pages/admin/Inquiries'));
-const Messages = lazy(() => import('./pages/admin/Messages'));
-const Settings = lazy(() => import('./pages/admin/Settings'));
-const AdminTestimonials = lazy(() => import('./pages/admin/Testimonials'));
-const Users = lazy(() => import('./pages/admin/Users'));
 
 // ==========================================
 // 3. Fallback Loader (Shows while chunks download)
@@ -53,24 +39,6 @@ function App() {
           <Route path="/packages" element={<Packages />} />
           <Route path="/packages/:slug" element={<PackageDetail />} />
           <Route path="/testimonials" element={<Testimonials />} />
-          <Route path="/auth" element={<Auth />} />
-
-          {/* ----------------------------- */}
-          {/* ADMIN ROUTES (Nested)         */}
-          {/* ----------------------------- */}
-          <Route path="/admin" element={<AdminLayout />}>
-            {/* The "index" route loads at exactly "/admin" */}
-            <Route index element={<AdminDashboard />} />
-
-            {/* Sub-routes load inside the Outlet in AdminLayout */}
-            <Route path="packages" element={<AdminPackages />} />
-            <Route path="packages/:id" element={<AdminPackageEdit />} />
-            <Route path="inquiries" element={<Inquiries />} />
-            <Route path="messages" element={<Messages />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="testimonials" element={<AdminTestimonials />} />
-            <Route path="users" element={<Users />} />
-          </Route>
 
           {/* Fallback 404 Route */}
           <Route path="*" element={

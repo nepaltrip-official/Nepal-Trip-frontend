@@ -29,6 +29,10 @@ export default function Testimonials() {
         ]);
     }, []);
 
+    useEffect(() => {
+        document.title = "Testimonials — NepalTrip";
+    }, []);
+
     return (
         <div className="min-h-screen">
             <Header brand={settings.brand_name} />

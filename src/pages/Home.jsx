@@ -25,6 +25,10 @@ export default function Home() {
         // fetch('/api/packages/featured').then(res => res.json()).then(setPackages);
         // fetch('/api/testimonials').then(res => res.json()).then(setTestimonials);
     }, []);
+    
+    useEffect(() => {
+        document.title = "NepalTrip";
+    }, []);
 
     return (
         <div className="min-h-screen">
