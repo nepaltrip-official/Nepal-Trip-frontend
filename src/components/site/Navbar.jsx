@@ -12,7 +12,7 @@ export function Navbar({ brand = "Nepal Trip" }) {
     const nav = [
         { label: "Home", to: "/" },
         { label: "Packages", to: "/packages" },
-        { label: "Discover", to: "/discover" }, // Added Discover
+        { label: "Discover", to: "/discover" },
         { label: "About", to: "/about" },
         { label: "Gallery", to: "/gallery" },
         { label: "Testimonials", to: "/testimonials" },
@@ -100,6 +100,24 @@ export function Navbar({ brand = "Nepal Trip" }) {
                                 {n.label}
                             </Link>
                         ))}
+
+                        {/* Mobile Buttons added here */}
+                        <div className="mt-2 flex flex-col gap-3 border-t border-border/40 pt-4 pb-2">
+                            <InquiryDialog
+                                trigger={
+                                    <button className="inline-flex w-full h-10 items-center justify-center rounded-md bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 ease-in-out hover:bg-[#E55B05] active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                                        Inquiry
+                                    </button>
+                                }
+                            />
+                            <LoginModal
+                                trigger={
+                                    <button className="inline-flex w-full h-10 items-center justify-center rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-all duration-300 hover:bg-muted active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                                        Log in
+                                    </button>
+                                }
+                            />
+                        </div>
                     </nav>
                 </div>
             </div>

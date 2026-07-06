@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Clock, IndianRupee, Info, Filter, X, ChevronLeft, ChevronRight, Home, Compass } from "lucide-react";
+import { MapPin, Clock, IndianRupee, Info, Filter, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ const CATEGORIES = ["All", "Mountains", "Beach", "Nature", "Honeymoon", "Heritag
 
 // --- Isolated Skeletons ---
 const CardSkeleton = () => (
-    <div className="relative w-full h-[70vh] min-h-125 max-h-187.5 md:h-[65vh] rounded-[1.5rem] md:rounded-[2rem] bg-muted/30 overflow-hidden flex flex-col justify-end shadow-2xl p-5 md:p-10 border border-border/40 animate-pulse">
+    <div className="relative w-full h-[calc(100dvh-13rem)] min-h-100 max-h-200 md:h-[65vh] md:min-h-125 md:max-h-187.5 rounded-[1.5rem] md:rounded-[2rem] bg-muted/30 overflow-hidden flex flex-col justify-end shadow-2xl p-5 md:p-10 border border-border/40 animate-pulse">
         {/* Floating Navigation Arrows Skeleton (Desktop only) */}
         <div className="hidden md:block absolute left-6 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-muted/60" />
         <div className="hidden md:block absolute right-6 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-muted/60" />
@@ -219,13 +219,22 @@ export default function Packages() {
     };
 
     return (
-        <div className="w-full bg-background min-h-[calc(100dvh-4rem)] flex flex-col items-center pt-2 pb-24 md:pb-4 md:pt-6 font-sans relative animate-in fade-in duration-700">
+        <div className="w-full bg-background min-h-[calc(100dvh-4rem)] flex flex-col items-center pt-2 pb-6 md:pb-4 md:pt-6 font-sans relative animate-in fade-in duration-700 overflow-hidden">
+
+            {/* Global style override to hide the footer specifically on mobile for this page */}
+            <style>{`
+                @media (max-width: 767px) {
+                    footer {
+                        display: none !important;
+                    }
+                }
+            `}</style>
 
             {/* Top Bar - Static shell loads instantly */}
             <motion.div
                 animate={{ y: isScrolled ? -100 : 0, opacity: isScrolled ? 0 : 1 }}
                 transition={{ duration: 0.3 }}
-                className="w-full max-w-sm md:max-w-5xl px-4 flex justify-between items-center z-50 mb-3 md:mb-6"
+                className="w-full max-w-full md:max-w-5xl px-4 flex justify-between items-center z-50 mb-3 md:mb-6"
             >
                 <div>
                     <h1 className="text-xl md:text-3xl font-black text-foreground drop-shadow-sm tracking-tight">
@@ -256,7 +265,7 @@ export default function Packages() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                 transition={{ duration: 0.2 }}
-                                className="absolute top-14 right-0 w-70 md:w-96 bg-card border border-border p-5 rounded-2xl shadow-xl flex flex-col gap-5 z-50 origin-top-right"
+                                className="absolute top-14 right-0 w-[85vw] max-w-75 md:w-96 bg-card border border-border p-5 rounded-2xl shadow-xl flex flex-col gap-5 z-50 origin-top-right"
                             >
                                 <div>
                                     <label className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Search Destination</label>
@@ -293,13 +302,13 @@ export default function Packages() {
             </motion.div>
 
             {/* Immersive Deck Area - Shows skeleton if loading, else shows cards */}
-            <div className="flex-1 w-full max-w-sm md:max-w-5xl relative z-10 px-2 md:px-0">
+            <div className="flex-1 w-full max-w-full md:max-w-5xl relative z-10 px-3 md:px-0">
                 {isLoading ? (
                     <CardSkeleton />
                 ) : (
                     <div
                         ref={cardContainerRef}
-                        className="relative w-full h-[70vh] min-h-125 max-h-187.5 md:h-[65vh] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/30 flex items-center justify-center shadow-2xl overscroll-x-none"
+                        className="relative w-full h-[calc(100dvh-13rem)] min-h-100 max-h-200 md:h-[65vh] md:min-h-125 md:max-h-187.5 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/30 flex items-center justify-center shadow-2xl overscroll-x-none"
                         onWheel={handleWheel}
                     >
                         {/* Mobile Swipe Hints */}
@@ -375,7 +384,7 @@ export default function Packages() {
 
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
-                                                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg transition-transform hover:scale-105 active:scale-95 shadow-xl"
+                                                    className="bg-[#2A5244] hover:bg-[#214136] text-white px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg transition-transform hover:scale-105 active:scale-95 shadow-xl"
                                                 >
                                                     View Details
                                                 </button>
@@ -418,33 +427,12 @@ export default function Packages() {
                         {filteredPackages.map((_, idx) => (
                             <div
                                 key={idx}
-                                className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 md:w-8 bg-primary' : 'w-1.5 md:w-2 bg-border hover:bg-border/80'}`}
+                                className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 md:w-8 bg-[#2A5244]' : 'w-1.5 md:w-2 bg-border hover:bg-border/80'}`}
                             />
                         ))}
                     </div>
                 )
             )}
-
-            {/* Bottom Sliding Navbar (Appears on scroll down on mobile - loads instantly) */}
-            <motion.div
-                initial={{ y: 100 }}
-                animate={{ y: isScrolled ? 0 : 100 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-card/80 backdrop-blur-xl border border-border shadow-2xl rounded-full px-6 py-3 flex gap-8 z-50 md:hidden"
-            >
-                <button onClick={() => navigate('/')} className="flex flex-col items-center text-muted-foreground hover:text-foreground">
-                    <Home size={20} />
-                    <span className="text-[10px] font-medium mt-1">Home</span>
-                </button>
-                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex flex-col items-center text-primary">
-                    <Compass size={20} />
-                    <span className="text-[10px] font-medium mt-1">Explore</span>
-                </button>
-                <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => setIsFilterOpen(true), 300); }} className="flex flex-col items-center text-muted-foreground hover:text-foreground">
-                    <Filter size={20} />
-                    <span className="text-[10px] font-medium mt-1">Filter</span>
-                </button>
-            </motion.div>
         </div>
     );
 }

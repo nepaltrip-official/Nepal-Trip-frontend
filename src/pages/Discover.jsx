@@ -205,13 +205,22 @@ export default function Discover() {
     };
 
     return (
-        <div className="w-full bg-background min-h-[calc(100dvh-4rem)] flex flex-col items-center pt-2 pb-24 md:pt-6 md:pb-16 font-sans relative">
+        <div className="w-full bg-background min-h-[calc(100dvh-4rem)] flex flex-col items-center pt-2 pb-6 md:pt-6 md:pb-16 font-sans relative overflow-hidden">
+
+            {/* Global style override to hide the footer specifically on mobile for this page */}
+            <style>{`
+                @media (max-width: 767px) {
+                    footer {
+                        display: none !important;
+                    }
+                }
+            `}</style>
 
             {/* Header & Funnel Filters - Fades and slides up on scroll, Lowered z-index to 30 */}
             <motion.div
                 animate={{ y: isScrolled ? -100 : 0, opacity: isScrolled ? 0 : 1 }}
                 transition={{ duration: 0.3 }}
-                className="w-full max-w-sm md:max-w-5xl px-4 flex justify-between items-center z-30 mb-3 md:mb-6 relative"
+                className="w-full max-w-full md:max-w-5xl px-4 flex justify-between items-center z-30 mb-3 md:mb-6 relative"
             >
                 <div>
                     <h1 className="text-xl md:text-3xl font-black text-foreground drop-shadow-sm tracking-tight">
@@ -237,7 +246,7 @@ export default function Discover() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                 transition={{ duration: 0.2 }}
-                                className="absolute top-14 right-0 w-60 md:w-80 bg-card border border-border p-5 rounded-2xl shadow-xl flex flex-col gap-4 z-50 origin-top-right"
+                                className="absolute top-14 right-0 w-[85vw] max-w-75 md:w-80 bg-card border border-border p-5 rounded-2xl shadow-xl flex flex-col gap-4 z-50 origin-top-right"
                             >
                                 <div>
                                     <label className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">Filter by Vibe</label>
@@ -247,8 +256,8 @@ export default function Discover() {
                                                 key={filter}
                                                 onClick={() => { setActiveFilter(filter); setIsFilterOpen(false); }}
                                                 className={`text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${activeFilter === filter
-                                                        ? "bg-primary text-primary-foreground"
-                                                        : "bg-muted/50 text-foreground hover:bg-muted"
+                                                    ? "bg-[#2A5244] text-white"
+                                                    : "bg-muted/50 text-foreground hover:bg-muted"
                                                     }`}
                                             >
                                                 {filter}
@@ -263,11 +272,11 @@ export default function Discover() {
             </motion.div>
 
             {/* Immersive Swipeable Deck Area */}
-            <div className="flex-1 w-full max-w-sm md:max-w-5xl relative z-10 px-2 md:px-0">
+            <div className="flex-1 w-full max-w-full md:max-w-5xl relative z-10 px-3 md:px-0">
 
                 {/* YouTube-Style Shimmer Skeleton Loader */}
                 {loading ? (
-                    <div className="w-full h-[70vh] min-h-125 max-h-187.5 md:h-[65vh] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/40 p-6 flex flex-col justify-end gap-4 animate-pulse relative">
+                    <div className="w-full h-[calc(100dvh-13rem)] min-h-100 max-h-200 md:h-[65vh] md:min-h-125 md:max-h-187.5 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/40 p-6 flex flex-col justify-end gap-4 animate-pulse relative shadow-2xl">
                         <div className="h-6 w-24 bg-foreground/10 rounded-full" />
                         <div className="h-10 w-3/4 bg-foreground/10 rounded-xl" />
                         <div className="h-16 w-full bg-foreground/10 rounded-2xl mt-2" />
@@ -280,7 +289,7 @@ export default function Discover() {
                 ) : (
                     <div
                         ref={cardContainerRef}
-                        className="relative w-full h-[70vh] min-h-125 max-h-187.5 md:h-[65vh] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/30 flex items-center justify-center shadow-2xl overscroll-x-none"
+                        className="relative w-full h-[calc(100dvh-13rem)] min-h-100 max-h-200 md:h-[65vh] md:min-h-125 md:max-h-187.5 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/30 flex items-center justify-center shadow-2xl overscroll-x-none"
                         onWheel={handleWheel}
                     >
 
@@ -372,28 +381,28 @@ export default function Discover() {
                                         </AnimatePresence>
 
                                         {/* Content Area */}
-                                        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 pointer-events-none flex flex-col justify-end">
+                                        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10 pointer-events-none flex flex-col justify-end">
 
-                                            <span className="inline-block bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/30 w-fit mb-3">
+                                            <span className="inline-block bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-white/30 w-fit mb-3">
                                                 {filteredDestinations[currentIndex].vibe}
                                             </span>
 
-                                            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-md pr-12">
+                                            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 md:mb-6 leading-tight drop-shadow-md pr-12">
                                                 {filteredDestinations[currentIndex].name}
                                             </h2>
 
                                             {/* Stats Row */}
-                                            <div className="flex flex-wrap gap-2 md:gap-4 border-t border-white/20 pt-4">
-                                                <div className="flex items-center gap-1.5 text-white/80 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 text-xs md:text-sm backdrop-blur-sm">
-                                                    <Mountain className="h-4 w-4 text-primary" />
+                                            <div className="flex flex-wrap gap-2 md:gap-4 border-t border-white/20 pt-4 md:pt-6">
+                                                <div className="flex items-center gap-1.5 text-white/90 bg-white/10 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/10 text-xs md:text-sm backdrop-blur-sm">
+                                                    <Mountain className="h-4 w-4 text-emerald-400" />
                                                     <span>{filteredDestinations[currentIndex].altitude}</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-white/80 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 text-xs md:text-sm backdrop-blur-sm">
-                                                    <Calendar className="h-4 w-4 text-primary" />
+                                                <div className="flex items-center gap-1.5 text-white/90 bg-white/10 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/10 text-xs md:text-sm backdrop-blur-sm">
+                                                    <Calendar className="h-4 w-4 text-emerald-400" />
                                                     <span>{filteredDestinations[currentIndex].bestTime}</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-white/80 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 text-xs md:text-sm backdrop-blur-sm">
-                                                    <CloudSun className="h-4 w-4 text-primary" />
+                                                <div className="flex items-center gap-1.5 text-white/90 bg-white/10 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/10 text-xs md:text-sm backdrop-blur-sm">
+                                                    <CloudSun className="h-4 w-4 text-emerald-400" />
                                                     <span>{filteredDestinations[currentIndex].weather}</span>
                                                 </div>
                                             </div>
@@ -431,32 +440,11 @@ export default function Discover() {
                     {filteredDestinations.map((_, idx) => (
                         <div
                             key={idx}
-                            className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 md:w-8 bg-primary' : 'w-1.5 md:w-2 bg-border hover:bg-border/80'}`}
+                            className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 md:w-8 bg-[#2A5244]' : 'w-1.5 md:w-2 bg-border hover:bg-border/80'}`}
                         />
                     ))}
                 </div>
             )}
-
-            {/* Bottom Sliding Navbar (Appears on scroll down on mobile) */}
-            <motion.div
-                initial={{ y: 100 }}
-                animate={{ y: isScrolled ? 0 : 100 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-card/90 backdrop-blur-xl border border-border shadow-2xl rounded-full px-6 py-3 flex gap-8 z-50 md:hidden"
-            >
-                <button onClick={() => navigate('/')} className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors">
-                    <Home size={20} />
-                    <span className="text-[10px] font-medium mt-1">Home</span>
-                </button>
-                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex flex-col items-center text-primary transition-colors">
-                    <Compass size={20} />
-                    <span className="text-[10px] font-medium mt-1">Discover</span>
-                </button>
-                <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => setIsFilterOpen(true), 300); }} className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors">
-                    <Filter size={20} />
-                    <span className="text-[10px] font-medium mt-1">Filter</span>
-                </button>
-            </motion.div>
         </div>
     );
 }
