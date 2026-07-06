@@ -122,7 +122,8 @@ export function AdminLayout() {
     );
 
     return (
-        <div className="flex min-h-screen w-full bg-[#F5F5F5] text-foreground font-sans">
+        // CHANGED: From "min-h-screen" to "h-screen overflow-hidden" to lock the sidebar height and let only the main tag scroll.
+        <div className="flex h-screen overflow-hidden w-full bg-[#F5F5F5] text-foreground font-sans">
             {/* Custom Tailwind Shimmer Keyframes */}
             <style>
                 {`
