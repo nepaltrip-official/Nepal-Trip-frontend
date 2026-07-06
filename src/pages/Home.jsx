@@ -4,21 +4,64 @@ import { ArrowRight, Compass, Heart, ShieldCheck, Star, Map } from "lucide-react
 import { Button } from "../components/ui/button";
 import { InquiryDialog } from "../components/site/InquiryDialog";
 
+// --- Isolated Skeletons ---
+
+// Testimonials skeleton
+const TestimonialsSkeleton = () => (
+    <section className="bg-secondary/40 py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="h-4 w-24 rounded-md bg-muted animate-pulse" />
+            <div className="h-10 w-64 rounded-md bg-muted mt-1 animate-pulse" />
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm animate-pulse">
+                        <div className="flex gap-1">
+                            {[1, 2, 3, 4, 5].map((s) => (
+                                <div key={s} className="h-4 w-4 rounded-sm bg-muted" />
+                            ))}
+                        </div>
+                        <div className="space-y-2 mt-4">
+                            <div className="h-4 w-full rounded-md bg-muted" />
+                            <div className="h-4 w-5/6 rounded-md bg-muted" />
+                        </div>
+                        <div className="flex flex-col gap-1 mt-5">
+                            <div className="h-4 w-32 rounded-md bg-muted" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+);
+
 export default function Home() {
+    const [isLoading, setIsLoading] = useState(true);
+    const [testimonials, setTestimonials] = useState([]);
+
+    // Initialize settings immediately since they are static/hardcoded
     const [settings] = useState({
         brand_name: "Nepal Trip",
         tagline: "CURATED JOURNEYS, UNFORGETTABLE MEMORIES",
         hero_title: "Journeys crafted for the way you travel",
         hero_subtitle: "Handpicked tour packages across breathtaking destinations. Tell us where you dream of going — we handle the rest.",
     });
-    const [testimonials, setTestimonials] = useState([]);
 
     useEffect(() => {
         document.title = "Nepal Trip";
-        setTestimonials([
-            { id: 1, rating: 5, message: "Flawlessly planned. An unforgettable memory!", name: "Aman M.", location: "Delhi" },
-            { id: 2, rating: 5, message: "Highly experienced local guides. Perfect pacing.", name: "Priya S.", location: "Mumbai" },
-        ]);
+
+        // Simulating data fetching delay for ONLY the testimonials
+        const fetchData = async () => {
+            setTimeout(() => {
+                setTestimonials([
+                    { id: 1, rating: 5, message: "Flawlessly planned. An unforgettable memory!", name: "Aman M.", location: "Delhi" },
+                    { id: 2, rating: 5, message: "Highly experienced local guides. Perfect pacing.", name: "Priya S.", location: "Mumbai" },
+                ]);
+
+                setIsLoading(false);
+            }, 1500);
+        };
+
+        fetchData();
     }, []);
 
     const galleryPreview = [
@@ -29,9 +72,9 @@ export default function Home() {
     ];
 
     return (
-        <div className="w-full">
-            {/* Hero */}
-            <section className="relative isolate overflow-hidden">
+        <div className="w-full animate-in fade-in duration-700">
+            {/* Hero - Loads Instantly */}
+            <section className="relative isolate overflow-hidden min-h-[80vh] flex flex-col justify-center">
                 <video autoPlay loop muted playsInline className="absolute inset-0 -z-10 h-full w-full object-cover hidden md:block">
                     <source src="/nepal-landscape.mp4" type="video/mp4" />
                 </video>
@@ -40,8 +83,8 @@ export default function Home() {
                 </video>
                 <div className="absolute inset-0 -z-10 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
 
-                <div className="mx-auto max-w-7xl px-4 py-32 sm:px-6 sm:py-40 lg:px-8 lg:py-52">
-                    <div className="max-w-2xl text-primary-foreground">
+                <div className="mx-auto w-full max-w-7xl px-4 py-32 sm:px-6 sm:py-40 lg:px-8 lg:py-52">
+                    <div className="max-w-2xl text-primary-foreground animate-in slide-in-from-bottom-4 fade-in duration-700">
                         <span className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs uppercase tracking-widest backdrop-blur">
                             {settings.tagline}
                         </span>
@@ -69,7 +112,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Why us */}
+            {/* Why us - Loads Instantly */}
             <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
                 <div className="grid gap-8 md:grid-cols-3">
                     {[
@@ -86,7 +129,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Visual Gallery Preview */}
+            {/* Visual Gallery Preview - Loads Instantly */}
             <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
@@ -116,9 +159,11 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Testimonials */}
-            {testimonials.length > 0 && (
-                <section className="bg-secondary/40 py-20">
+            {/* Testimonials - Shimmers While Loading */}
+            {isLoading ? (
+                <TestimonialsSkeleton />
+            ) : testimonials.length > 0 ? (
+                <section className="bg-secondary/40 py-20 animate-in fade-in duration-500">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <p className="font-serif text-sm uppercase tracking-widest text-accent">Kind words</p>
                         <h2 className="mt-1 font-serif text-3xl sm:text-4xl text-foreground">Loved by travelers</h2>
@@ -140,9 +185,9 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
-            )}
+            ) : null}
 
-            {/* CTA */}
+            {/* CTA - Loads Instantly */}
             <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
                 <div className="relative overflow-hidden rounded-3xl bg-primary px-8 py-16 text-primary-foreground sm:px-16 sm:py-20 shadow-xl">
                     <div className="absolute -right-20 -top-20 opacity-10">

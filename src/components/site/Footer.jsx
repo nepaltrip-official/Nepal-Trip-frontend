@@ -27,6 +27,7 @@ export function Footer({ settings }) {
                     <ul className="mt-4 flex flex-col items-center md:items-start space-y-3 text-sm">
                         <li><Link to="/" className="transition-colors hover:text-accent">Home</Link></li>
                         <li><Link to="/packages" className="transition-colors hover:text-accent">Packages</Link></li>
+                        <li><Link to="/discover" className="transition-colors hover:text-accent">Discover</Link></li> {/* Added Discover */}
                         <li><Link to="/about" className="transition-colors hover:text-accent">About</Link></li>
                         <li><Link to="/gallery" className="transition-colors hover:text-accent">Gallery</Link></li>
                         <li><Link to="/testimonials" className="transition-colors hover:text-accent">Testimonials</Link></li>

@@ -12,8 +12,9 @@ export function Navbar({ brand = "Nepal Trip" }) {
     const nav = [
         { label: "Home", to: "/" },
         { label: "Packages", to: "/packages" },
+        { label: "Discover", to: "/discover" }, // Added Discover
         { label: "About", to: "/about" },
-        { label: "Gallery", to: "/gallery" }, // Added Gallery link here
+        { label: "Gallery", to: "/gallery" },
         { label: "Testimonials", to: "/testimonials" },
         { label: "Contact", to: "/contact" },
     ];
@@ -53,7 +54,6 @@ export function Navbar({ brand = "Nepal Trip" }) {
                         </Link>
                     ))}
 
-                    {/* Action Buttons */}
                     <div className="ml-2 flex items-center gap-3 border-l border-border/40 pl-6">
                         <InquiryDialog
                             trigger={
@@ -72,12 +72,9 @@ export function Navbar({ brand = "Nepal Trip" }) {
                     </div>
                 </nav>
 
-                {/* Mobile Toggle */}
                 <button
                     className="md:hidden text-foreground transition-transform duration-300 ease-in-out active:scale-90"
                     onClick={() => setOpen(!open)}
-                    aria-label="Toggle menu"
-                    aria-expanded={open}
                 >
                     {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                 </button>
@@ -103,27 +100,6 @@ export function Navbar({ brand = "Nepal Trip" }) {
                                 {n.label}
                             </Link>
                         ))}
-
-                        {/* Mobile Action Buttons */}
-                        <div className="mt-4 grid gap-3 border-t border-border/40 pt-4 pb-2">
-                            <InquiryDialog
-                                trigger={
-                                    <button
-                                        onClick={() => setOpen(false)}
-                                        className="inline-flex h-10 w-full items-center justify-center rounded-md bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-[#E55B05] active:scale-95"
-                                    >
-                                        Inquiry
-                                    </button>
-                                }
-                            />
-                            <LoginModal
-                                trigger={
-                                    <button className="inline-flex h-10 w-full items-center justify-center rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-all duration-300 hover:bg-muted active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                                        Log in
-                                    </button>
-                                }
-                            />
-                        </div>
                     </nav>
                 </div>
             </div>
