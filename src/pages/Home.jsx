@@ -1,49 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Compass, Heart, ShieldCheck, Star } from "lucide-react";
+import { ArrowRight, Compass, Heart, ShieldCheck, Star, Map } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { Navbar } from "../components/site/Navbar";
-import { Footer } from "../components/site/Footer";
-import { PackageCard } from "../components/site/PackageCard";
 import { InquiryDialog } from "../components/site/InquiryDialog";
-import { heroImage } from "../lib/images";
 
 export default function Home() {
-    // Temporary fallback data to keep the UI beautiful before the backend connects
-    const [settings, setSettings] = useState({
+    const [settings] = useState({
         brand_name: "Nepal Trip",
         tagline: "CURATED JOURNEYS, UNFORGETTABLE MEMORIES",
         hero_title: "Journeys crafted for the way you travel",
         hero_subtitle: "Handpicked tour packages across breathtaking destinations. Tell us where you dream of going — we handle the rest.",
     });
-    const [packages, setPackages] = useState([]);
     const [testimonials, setTestimonials] = useState([]);
 
     useEffect(() => {
-        // 🌐 Future backend connection point
-        // fetch('/api/settings').then(res => res.json()).then(setSettings);
-        // fetch('/api/packages/featured').then(res => res.json()).then(setPackages);
-        // fetch('/api/testimonials').then(res => res.json()).then(setTestimonials);
+        document.title = "Nepal Trip";
+        setTestimonials([
+            { id: 1, rating: 5, message: "Flawlessly planned. An unforgettable memory!", name: "Aman M.", location: "Delhi" },
+            { id: 2, rating: 5, message: "Highly experienced local guides. Perfect pacing.", name: "Priya S.", location: "Mumbai" },
+        ]);
     }, []);
 
-    useEffect(() => {
-        document.title = "NepalTrip";
-    }, []);
+    const galleryPreview = [
+        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518002054494-3a6f94352e9d?q=80&w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1605640840605-14ac1855827b?q=80&w=800&auto=format&fit=crop",
+    ];
 
     return (
-        <div className="min-h-screen">
-            <Navbar brand={settings.brand_name} />
-
+        <div className="w-full">
             {/* Hero */}
             <section className="relative isolate overflow-hidden">
-                <img
-                    src={settings.hero_image || heroImage}
-                    alt="Travel destination"
-                    width={1920}
-                    height={1280}
-                    className="absolute inset-0 -z-10 h-full w-full object-cover"
-                />
+                <video autoPlay loop muted playsInline className="absolute inset-0 -z-10 h-full w-full object-cover hidden md:block">
+                    <source src="/nepal-landscape.mp4" type="video/mp4" />
+                </video>
+                <video autoPlay loop muted playsInline className="absolute inset-0 -z-10 h-full w-full object-cover block md:hidden">
+                    <source src="/nepal-portrait.mp4" type="video/mp4" />
+                </video>
                 <div className="absolute inset-0 -z-10 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
+
                 <div className="mx-auto max-w-7xl px-4 py-32 sm:px-6 sm:py-40 lg:px-8 lg:py-52">
                     <div className="max-w-2xl text-primary-foreground">
                         <span className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs uppercase tracking-widest backdrop-blur">
@@ -55,19 +51,19 @@ export default function Home() {
                         <p className="mt-5 max-w-xl text-base text-white/85 sm:text-lg">
                             {settings.hero_subtitle}
                         </p>
-                        <div className="mt-8 flex flex-wrap gap-3">
-                            <Link to="/packages">
-                                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                                    Browse packages <ArrowRight className="ml-1 h-4 w-4" />
-                                </Button>
-                            </Link>
+                        <div className="mt-8 flex flex-wrap gap-4">
                             <InquiryDialog
                                 trigger={
-                                    <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20">
+                                    <Button size="lg" className="bg-accent px-8 text-accent-foreground hover:bg-accent/90">
                                         Plan my trip
                                     </Button>
                                 }
                             />
+                            <Link to="/packages">
+                                <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20">
+                                    Browse packages <ArrowRight className="ml-2 h-4 w-4" />
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -81,29 +77,41 @@ export default function Home() {
                         { icon: ShieldCheck, title: "Trusted since 2015", body: "Thousands of travelers, five-star reviews and full on-trip support." },
                         { icon: Heart, title: "Local partners", body: "We work with local guides and hosts so your money reaches the community." },
                     ].map((f) => (
-                        <div key={f.title} className="rounded-2xl border border-border/60 bg-card p-6">
+                        <div key={f.title} className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
                             <f.icon className="h-8 w-8 text-accent" />
-                            <h3 className="mt-4 font-serif text-xl">{f.title}</h3>
+                            <h3 className="mt-4 font-serif text-xl text-foreground">{f.title}</h3>
                             <p className="mt-2 text-sm text-muted-foreground">{f.body}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
-            {/* Featured packages */}
+            {/* Visual Gallery Preview */}
             <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-                <div className="flex items-end justify-between">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
-                        <p className="font-serif text-sm uppercase tracking-widest text-accent">Featured journeys</p>
-                        <h2 className="mt-1 font-serif text-3xl sm:text-4xl">Where our travelers are going</h2>
+                        <p className="font-serif text-sm uppercase tracking-widest text-accent">Through our lens</p>
+                        <h2 className="mt-1 font-serif text-3xl sm:text-4xl text-foreground">Glimpses of Nepal</h2>
                     </div>
-                    <Link to="/packages" className="hidden text-sm text-primary hover:underline sm:inline">
-                        View all →
+                    <Link to="/gallery">
+                        <Button variant="ghost" className="text-primary hover:bg-primary/5 hover:text-accent">
+                            View full gallery <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
                     </Link>
                 </div>
-                <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {packages.map((p) => (
-                        <PackageCard key={p.id} pkg={p} />
+
+                <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {galleryPreview.map((src, idx) => (
+                        <div key={idx} className={`relative overflow-hidden rounded-2xl group ${idx === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
+                            <div className="aspect-4/3 md:aspect-auto md:h-full w-full bg-muted">
+                                <img
+                                    src={src}
+                                    alt={`Gallery preview ${idx + 1}`}
+                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                            </div>
+                            <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        </div>
                     ))}
                 </div>
             </section>
@@ -113,10 +121,10 @@ export default function Home() {
                 <section className="bg-secondary/40 py-20">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <p className="font-serif text-sm uppercase tracking-widest text-accent">Kind words</p>
-                        <h2 className="mt-1 font-serif text-3xl sm:text-4xl">Loved by travelers</h2>
+                        <h2 className="mt-1 font-serif text-3xl sm:text-4xl text-foreground">Loved by travelers</h2>
                         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {testimonials.slice(0, 3).map((t) => (
-                                <blockquote key={t.id} className="rounded-2xl border border-border/60 bg-card p-6">
+                            {testimonials.map((t) => (
+                                <blockquote key={t.id} className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
                                     <div className="flex gap-1 text-accent">
                                         {Array.from({ length: t.rating }).map((_, i) => (
                                             <Star key={i} className="h-4 w-4 fill-current" />
@@ -124,8 +132,8 @@ export default function Home() {
                                     </div>
                                     <p className="mt-3 text-sm leading-relaxed text-foreground">“{t.message}”</p>
                                     <footer className="mt-4 text-sm">
-                                        <span className="font-medium">{t.name}</span>
-                                        {t.location && <span className="text-muted-foreground"> · {t.location}</span>}
+                                        <span className="font-medium text-foreground">{t.name}</span>
+                                        <span className="text-muted-foreground"> · {t.location}</span>
                                     </footer>
                                 </blockquote>
                             ))}
@@ -136,24 +144,28 @@ export default function Home() {
 
             {/* CTA */}
             <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-                <div className="rounded-3xl bg-primary px-8 py-14 text-primary-foreground sm:px-14">
-                    <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                        <div>
-                            <h2 className="max-w-xl font-serif text-3xl sm:text-4xl">Have somewhere in mind? Let's plan it together.</h2>
-                            <p className="mt-3 text-primary-foreground/80">Tell us where you dream of going and we'll build a trip around it.</p>
+                <div className="relative overflow-hidden rounded-3xl bg-primary px-8 py-16 text-primary-foreground sm:px-16 sm:py-20 shadow-xl">
+                    <div className="absolute -right-20 -top-20 opacity-10">
+                        <Map className="h-96 w-96" />
+                    </div>
+                    <div className="relative z-10 flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+                        <div className="max-w-xl">
+                            <p className="font-serif text-sm uppercase tracking-widest text-accent">Know before you go</p>
+                            <h2 className="mt-2 font-serif text-3xl leading-tight sm:text-4xl lg:text-5xl">
+                                Haven't decided where to go yet? Let's fix that.
+                            </h2>
+                            <p className="mt-4 text-base text-primary-foreground/80 sm:text-lg">
+                                Explore local trivia, practical travel insights, and discover the perfect destination based on your vibe—no bookings required, just pure inspiration.
+                            </p>
                         </div>
-                        <InquiryDialog
-                            trigger={
-                                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                                    Start planning
-                                </Button>
-                            }
-                        />
+                        <Link to="/discover" className="shrink-0">
+                            <Button size="lg" className="bg-accent px-8 text-lg text-accent-foreground hover:bg-accent/90 shadow-lg">
+                                Discover Destinations
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </section>
-
-            <Footer settings={settings} />
         </div>
     );
 }

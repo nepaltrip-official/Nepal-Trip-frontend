@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { InquiryDialog } from "./InquiryDialog"; // Adjust the import path as needed
+import { InquiryDialog } from "./InquiryDialog";
 import { LoginModal } from "./LoginModal";
 
 export function Navbar({ brand = "Nepal Trip" }) {
@@ -13,6 +13,7 @@ export function Navbar({ brand = "Nepal Trip" }) {
         { label: "Home", to: "/" },
         { label: "Packages", to: "/packages" },
         { label: "About", to: "/about" },
+        { label: "Gallery", to: "/gallery" }, // Added Gallery link here
         { label: "Testimonials", to: "/testimonials" },
         { label: "Contact", to: "/contact" },
     ];
@@ -54,7 +55,6 @@ export function Navbar({ brand = "Nepal Trip" }) {
 
                     {/* Action Buttons */}
                     <div className="ml-2 flex items-center gap-3 border-l border-border/40 pl-6">
-                        {/* Triggering the Dialog instead of routing */}
                         <InquiryDialog
                             trigger={
                                 <button className="inline-flex h-9 items-center justify-center rounded-md bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 ease-in-out hover:bg-[#E55B05] hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
@@ -83,7 +83,7 @@ export function Navbar({ brand = "Nepal Trip" }) {
                 </button>
             </div>
 
-            {/* Mobile Nav - Smooth Accordion Dropdown */}
+            {/* Mobile Nav */}
             <div
                 className={`md:hidden grid transition-[grid-template-rows] duration-300 ease-in-out ${open ? "grid-rows-[1fr] border-b border-border/40" : "grid-rows-[0fr]"
                     }`}
@@ -109,7 +109,7 @@ export function Navbar({ brand = "Nepal Trip" }) {
                             <InquiryDialog
                                 trigger={
                                     <button
-                                        onClick={() => setOpen(false)} // Closes mobile menu when modal opens
+                                        onClick={() => setOpen(false)}
                                         className="inline-flex h-10 w-full items-center justify-center rounded-md bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-[#E55B05] active:scale-95"
                                     >
                                         Inquiry
@@ -118,7 +118,7 @@ export function Navbar({ brand = "Nepal Trip" }) {
                             />
                             <LoginModal
                                 trigger={
-                                    <button className="inline-flex h-9 items-center justify-center rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-all duration-300 hover:bg-muted hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
+                                    <button className="inline-flex h-10 w-full items-center justify-center rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-all duration-300 hover:bg-muted active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                                         Log in
                                     </button>
                                 }

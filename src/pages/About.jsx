@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Navbar } from "../components/site/Navbar";
-import { Footer } from "../components/site/Footer";
 
 export default function About() {
     const [settings, setSettings] = useState({
@@ -18,28 +16,25 @@ export default function About() {
     }, []);
 
     return (
-        <div className="min-h-screen">
-            <Navbar brand={settings.brand_name} />
-            <section className="mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8">
-                <p className="font-serif text-sm uppercase tracking-widest text-accent">Who we are</p>
-                <h1 className="mt-2 font-serif text-4xl sm:text-5xl">{settings.about_title}</h1>
-                <p className="mt-6 whitespace-pre-line text-lg leading-relaxed text-muted-foreground">
-                    {settings.about_body}
-                </p>
-                <div className="mt-12 grid gap-8 sm:grid-cols-3">
-                    {[
-                        { n: "5000+", l: "happy travelers" },
-                        { n: "40+", l: "destinations" },
-                        { n: "9 yrs", l: "of craft" },
-                    ].map((s) => (
-                        <div key={s.l}>
-                            <div className="font-serif text-3xl text-primary">{s.n}</div>
-                            <div className="text-sm text-muted-foreground">{s.l}</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-            <Footer settings={settings} />
-        </div>
+        // Only the actual content of the page goes here now!
+        <section className="mx-auto w-full max-w-3xl px-4 py-24 sm:px-6 lg:px-8">
+            <p className="font-serif text-sm uppercase tracking-widest text-accent">Who we are</p>
+            <h1 className="mt-2 font-serif text-4xl sm:text-5xl">{settings.about_title}</h1>
+            <p className="mt-6 whitespace-pre-line text-lg leading-relaxed text-muted-foreground">
+                {settings.about_body}
+            </p>
+            <div className="mt-12 grid gap-8 sm:grid-cols-3">
+                {[
+                    { n: "5000+", l: "happy travelers" },
+                    { n: "40+", l: "destinations" },
+                    { n: "9 yrs", l: "of craft" },
+                ].map((s) => (
+                    <div key={s.l}>
+                        <div className="font-serif text-3xl text-primary">{s.n}</div>
+                        <div className="text-sm text-muted-foreground">{s.l}</div>
+                    </div>
+                ))}
+            </div>
+        </section>
     );
 }

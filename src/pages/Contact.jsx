@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
-import { Navbar } from "@/components/site/Navbar";
-import { Footer } from "@/components/site/Footer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -11,10 +9,9 @@ import { toast } from "sonner";
 export default function Contact() {
     const [submitting, setSubmitting] = useState(false);
 
-    // Temporary local state for site settings.
-    // This will later be fetched from your Express/MongoDB backend.
-    const [settings, setSettings] = useState({
-        brand_name: "NepalTrip",
+    // Kept local settings for the page content details. 
+    // This will later be fetched from your Express/MongoDB backend or global Context.
+    const [settings] = useState({
         contact_email: "info@nepaltrip.in",
         contact_phone: "+977-1-4000000",
         contact_address: "Thamel, Kathmandu, Nepal"
@@ -61,67 +58,63 @@ export default function Contact() {
     }
 
     return (
-        <div className="min-h-screen">
-            <Navbar brand={settings.brand_name} />
-            <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-                <div className="grid gap-16 md:grid-cols-2">
+        <section className="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+            <div className="grid gap-16 md:grid-cols-2">
 
-                    {/* Contact Information Side */}
-                    <div>
-                        <p className="font-serif text-sm uppercase tracking-widest text-accent">Say hello</p>
-                        <h1 className="mt-2 font-serif text-4xl sm:text-5xl">Let's plan your journey</h1>
-                        <p className="mt-4 text-muted-foreground">
-                            Tell us a bit about the trip you have in mind and we'll get back within one business day.
-                        </p>
-                        <ul className="mt-8 space-y-4 text-sm">
-                            <li className="flex gap-3">
-                                <Mail className="mt-0.5 h-4 w-4 text-accent" /> {settings.contact_email}
-                            </li>
-                            <li className="flex gap-3">
-                                <Phone className="mt-0.5 h-4 w-4 text-accent" /> {settings.contact_phone}
-                            </li>
-                            <li className="flex gap-3">
-                                <MapPin className="mt-0.5 h-4 w-4 text-accent" /> {settings.contact_address}
-                            </li>
-                        </ul>
+                {/* Contact Information Side */}
+                <div>
+                    <p className="font-serif text-sm uppercase tracking-widest text-accent">Say hello</p>
+                    <h1 className="mt-2 font-serif text-4xl sm:text-5xl">Let's plan your journey</h1>
+                    <p className="mt-4 text-muted-foreground">
+                        Tell us a bit about the trip you have in mind and we'll get back within one business day.
+                    </p>
+                    <ul className="mt-8 space-y-4 text-sm">
+                        <li className="flex gap-3">
+                            <Mail className="mt-0.5 h-4 w-4 text-accent" /> {settings.contact_email}
+                        </li>
+                        <li className="flex gap-3">
+                            <Phone className="mt-0.5 h-4 w-4 text-accent" /> {settings.contact_phone}
+                        </li>
+                        <li className="flex gap-3">
+                            <MapPin className="mt-0.5 h-4 w-4 text-accent" /> {settings.contact_address}
+                        </li>
+                    </ul>
+                </div>
+
+                {/* Contact Form Side */}
+                <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                    <div className="grid gap-2">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" name="name" required />
                     </div>
 
-                    {/* Contact Form Side */}
-                    <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                    <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
-                            <Input id="name" name="name" required />
+                            <Label htmlFor="email">Email</Label>
+                            <Input id="email" name="email" type="email" required />
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" name="email" type="email" required />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="phone">Phone (Optional)</Label>
-                                <Input id="phone" name="phone" />
-                            </div>
-                        </div>
-
                         <div className="grid gap-2">
-                            <Label htmlFor="subject">Subject (Optional)</Label>
-                            <Input id="subject" name="subject" />
+                            <Label htmlFor="phone">Phone (Optional)</Label>
+                            <Input id="phone" name="phone" />
                         </div>
+                    </div>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="message">Message</Label>
-                            <Textarea id="message" name="message" rows={5} required />
-                        </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="subject">Subject (Optional)</Label>
+                        <Input id="subject" name="subject" />
+                    </div>
 
-                        <Button type="submit" disabled={submitting} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                            {submitting ? "Sending..." : "Send message"}
-                        </Button>
-                    </form>
+                    <div className="grid gap-2">
+                        <Label htmlFor="message">Message</Label>
+                        <Textarea id="message" name="message" rows={5} required />
+                    </div>
 
-                </div>
-            </section>
-            <Footer settings={settings} />
-        </div>
+                    <Button type="submit" disabled={submitting} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                        {submitting ? "Sending..." : "Send message"}
+                    </Button>
+                </form>
+
+            </div>
+        </section>
     );
 }

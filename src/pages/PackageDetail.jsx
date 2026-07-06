@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Check, X, Clock, MapPin, ArrowLeft } from "lucide-react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { InquiryDialog } from "@/components/InquiryDialog";
-import { Button } from "@/components/ui/button";
+import { InquiryDialog } from "../components/site/InquiryDialog";
+import { Button } from "../components/ui/button";
 import { resolveImage } from "@/lib/images";
 
 export default function PackageDetail() {
     const { slug } = useParams();
     const [pkg, setPkg] = useState(null);
-    const [settings, setSettings] = useState({ brand_name: "Wanderlust Travels" });
     const [loading, setLoading] = useState(true);
+
+    // Kept only the email since the mailto link uses it
+    const [settings] = useState({ contact_email: "info@nepaltrip.in" });
 
     useEffect(() => {
         // 🌐 MERN Backend Logic will go here:
@@ -40,11 +40,11 @@ export default function PackageDetail() {
         }, 500);
     }, [slug]);
 
-    if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+    if (loading) return <div className="flex py-32 items-center justify-center">Loading...</div>;
 
     if (!pkg) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
+            <div className="flex py-32 items-center justify-center">
                 <div className="text-center">
                     <h1 className="font-serif text-3xl">Package not found</h1>
                     <Link to="/packages" className="mt-4 inline-block text-accent hover:underline">
@@ -56,9 +56,7 @@ export default function PackageDetail() {
     }
 
     return (
-        <div className="min-h-screen">
-            <Navbar brand={settings.brand_name} />
-
+        <div className="w-full">
             <section className="relative isolate overflow-hidden">
                 <img
                     src={resolveImage(pkg.cover_image)}
@@ -167,8 +165,6 @@ export default function PackageDetail() {
                     </aside>
                 </div>
             </section>
-
-            <Footer settings={settings} />
         </div>
     );
 }

@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Navbar } from "../components/site/Navbar";
-import { Footer } from "../components/site/Footer";
 import { PackageCard } from "../components/site/PackageCard";
 import { Input } from "../components/ui/input";
 
 const CATEGORIES = ["All", "Mountains", "Beach", "Nature", "Honeymoon", "Heritage", "Culture"];
 
 export default function Packages() {
-    const [settings] = useState({ brand_name: "Wanderlust Travels" });
     const [packages, setPackages] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
 
     useEffect(() => {
-        document.title = "Packages   — NepalTrip";
+        document.title = "Packages — NepalTrip";
     }, []);
 
     useEffect(() => {
@@ -48,54 +45,48 @@ export default function Packages() {
     });
 
     return (
-        <div className="min-h-screen flex flex-col bg-background/50">
-            <Navbar brand={settings.brand_name} />
+        <div className="w-full bg-background/50 py-12">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-            <main className="flex-1">
-                <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-
-                    {/* Filters Bar */}
-                    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                        <Input
-                            type="search"
-                            placeholder="Search destination or trip..."
-                            className="max-w-sm bg-white"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <div className="flex flex-wrap gap-2">
-                            {CATEGORIES.map(cat => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setSelectedCategory(cat)}
-                                    className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${selectedCategory === cat
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-white text-foreground border hover:bg-muted"
-                                        }`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Package Grid */}
-                    <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {filteredPackages.map((p) => (
-                            <PackageCard key={p.id} pkg={p} />
+                {/* Filters Bar */}
+                <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <Input
+                        type="search"
+                        placeholder="Search destination or trip..."
+                        className="max-w-sm bg-white"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <div className="flex flex-wrap gap-2">
+                        {CATEGORIES.map(cat => (
+                            <button
+                                key={cat}
+                                onClick={() => setSelectedCategory(cat)}
+                                className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${selectedCategory === cat
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-white text-foreground border hover:bg-muted"
+                                    }`}
+                            >
+                                {cat}
+                            </button>
                         ))}
-
-                        {filteredPackages.length === 0 && (
-                            <div className="col-span-full py-20 text-center text-muted-foreground">
-                                No packages found matching your criteria.
-                            </div>
-                        )}
                     </div>
-
                 </div>
-            </main>
 
-            <Footer settings={settings} />
+                {/* Package Grid */}
+                <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {filteredPackages.map((p) => (
+                        <PackageCard key={p.id} pkg={p} />
+                    ))}
+
+                    {filteredPackages.length === 0 && (
+                        <div className="col-span-full py-20 text-center text-muted-foreground">
+                            No packages found matching your criteria.
+                        </div>
+                    )}
+                </div>
+
+            </div>
         </div>
     );
 }
