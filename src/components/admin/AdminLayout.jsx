@@ -75,7 +75,7 @@ export function AdminLayout() {
                             </div>
                             <div className="flex flex-col min-w-0">
                                 <span className="text-sm font-bold text-foreground leading-tight truncate">Ankit Pandey</span>
-                                <span className="text-[11px] font-medium text-muted-foreground truncate">Super Admin</span>
+                                <span className="text-[11px] font-medium text-muted-foreground truncate">Admin</span>
                             </div>
                         </div>
                     )}

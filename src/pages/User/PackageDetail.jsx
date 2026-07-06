@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Check, X, Clock, MapPin, ArrowLeft, ChevronDown, ChevronUp, Image as ImageIcon } from "lucide-react";
+import { Check, X, Clock, MapPin, ArrowLeft, ChevronDown, Image as ImageIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { InquiryDialog } from "../../components/site/InquiryDialog";
 import { Button } from "../../components/ui/button";
 import { resolveImage } from "@/lib/images";
@@ -26,16 +27,30 @@ const ItineraryDay = ({ day, title, details, isFirst, isLast }) => {
                 <h3 className="font-serif text-lg font-semibold group-hover:text-primary transition-colors">
                     {title}
                 </h3>
-                <div className="p-1 rounded-full bg-muted/50 text-muted-foreground group-hover:bg-muted group-hover:text-foreground transition-colors">
-                    {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                </div>
+                <motion.div
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="p-1 rounded-full bg-muted/50 text-muted-foreground group-hover:bg-muted group-hover:text-foreground transition-colors"
+                >
+                    <ChevronDown size={16} />
+                </motion.div>
             </button>
 
-            {isOpen && (
-                <div className="mt-4 text-muted-foreground leading-relaxed text-sm md:text-base animate-in fade-in slide-in-from-top-2 duration-300">
-                    {details}
-                </div>
-            )}
+            <AnimatePresence initial={false}>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                    >
+                        <div className="mt-4 text-muted-foreground leading-relaxed text-sm md:text-base pb-2">
+                            {details}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
@@ -76,7 +91,7 @@ export default function PackageDetail() {
                 exclusions: ["International airfare", "Schengen Visa fees", "Meals not mentioned"]
             });
             setLoading(false);
-        }, 600);
+        }, 1200); // Slightly increased to showcase the smooth shimmer
     }, [slug]);
 
     const handleViewGallery = () => {
@@ -84,11 +99,94 @@ export default function PackageDetail() {
     };
 
     if (loading) return (
-        <div className="flex min-h-[70vh] items-center justify-center bg-background">
-            <div className="flex flex-col items-center gap-4">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                <p className="font-serif text-muted-foreground animate-pulse">Curating your journey...</p>
-            </div>
+        <div className="w-full bg-background font-sans pb-20">
+            <style>
+                {`
+                @keyframes shimmer {
+                    100% { transform: translateX(100%); }
+                }
+                .shimmer {
+                    position: relative;
+                    overflow: hidden;
+                    background-color: hsl(var(--muted) / 0.6);
+                }
+                .shimmer::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    transform: translateX(-100%);
+                    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+                    animation: shimmer 1.5s infinite;
+                }
+                `}
+            </style>
+
+            {/* Shimmer Hero Section */}
+            <section className="relative w-full pt-28 pb-12 md:pt-40 md:pb-20 flex flex-col justify-end overflow-hidden shimmer">
+                <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="h-10 w-32 mb-6 rounded-full bg-black/5" />
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <div className="h-7 w-24 rounded-full bg-black/5" />
+                        <div className="h-7 w-40 rounded-full bg-black/5" />
+                        <div className="h-7 w-48 rounded-full bg-black/5" />
+                    </div>
+                    <div className="h-12 md:h-16 lg:h-24 w-3/4 max-w-3xl rounded-2xl bg-black/5" />
+                </div>
+            </section>
+
+            <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                <div className="grid gap-12 lg:grid-cols-3 lg:gap-16">
+                    <div className="lg:col-span-2 space-y-12 md:space-y-16">
+                        {/* Shimmer Bento Box */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-2 md:gap-3 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-sm h-70 sm:h-87.5 md:h-112.5">
+                            <div className="col-span-2 row-span-2 shimmer" />
+                            <div className="shimmer" />
+                            <div className="hidden md:block shimmer" />
+                            <div className="col-span-1 md:col-span-2 row-span-1 shimmer" />
+                        </div>
+
+                        {/* Shimmer Text Content */}
+                        <div className="space-y-4">
+                            <div className="h-8 w-1/3 rounded-lg shimmer mb-6" />
+                            <div className="h-4 w-full rounded-md shimmer" />
+                            <div className="h-4 w-full rounded-md shimmer" />
+                            <div className="h-4 w-4/5 rounded-md shimmer" />
+                        </div>
+
+                        {/* Shimmer Itinerary */}
+                        <div className="space-y-8 pt-8">
+                            <div className="h-8 w-1/2 rounded-lg shimmer mb-8" />
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="flex gap-4">
+                                    <div className="h-6 w-6 rounded-full shimmer shrink-0" />
+                                    <div className="flex-1 space-y-3">
+                                        <div className="h-6 w-1/3 rounded-md shimmer" />
+                                        <div className="h-4 w-full rounded-md shimmer" />
+                                        <div className="h-4 w-5/6 rounded-md shimmer" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Shimmer Sidebar */}
+                    <aside className="lg:sticky lg:top-28 lg:h-fit z-10">
+                        <div className="rounded-[2rem] border border-border bg-card p-6 shadow-xl h-80 flex flex-col justify-between">
+                            <div>
+                                <div className="h-4 w-24 rounded-md shimmer mb-3" />
+                                <div className="h-10 w-48 rounded-lg shimmer mb-2" />
+                                <div className="h-4 w-32 rounded-md shimmer" />
+                            </div>
+                            <div className="h-14 w-full rounded-xl shimmer mt-6" />
+                            <div className="space-y-3 mt-6">
+                                <div className="h-3 w-3/4 rounded-md shimmer" />
+                                <div className="h-3 w-5/6 rounded-md shimmer" />
+                                <div className="h-3 w-2/3 rounded-md shimmer" />
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
         </div>
     );
 
@@ -105,13 +203,7 @@ export default function PackageDetail() {
 
     return (
         <div className="w-full bg-background font-sans pb-20">
-
-            {/* 
-              FIXED HERO SECTION: 
-              - Removed fixed heights (h-[60vh]) that caused massive spaces on mobile.
-              - Changed absolute image z-index from -10 to 0 so it actually shows up above the body background.
-              - Used padding-top (pt-32) to account for your navbar.
-            */}
+            {/* FIXED HERO SECTION */}
             <section className="relative w-full pt-28 pb-12 md:pt-40 md:pb-20 flex flex-col justify-end overflow-hidden">
                 <div className="absolute inset-0 z-0 bg-muted">
                     <img
@@ -151,7 +243,6 @@ export default function PackageDetail() {
                 <div className="grid gap-12 lg:grid-cols-3 lg:gap-16">
 
                     <div className="lg:col-span-2 space-y-12 md:space-y-16">
-
                         {/* Bento Box Image Grid */}
                         {pkg.gallery_images && pkg.gallery_images.length >= 4 && (
                             <div className="grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-2 md:gap-3 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-lg h-70 sm:h-87.5 md:h-112.5">
