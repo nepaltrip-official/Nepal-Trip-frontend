@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Check, X, Clock, MapPin, ArrowLeft, ChevronDown, ChevronUp, Image as ImageIcon } from "lucide-react";
-import { InquiryDialog } from "../components/site/InquiryDialog";
-import { Button } from "../components/ui/button";
+import { InquiryDialog } from "../../components/site/InquiryDialog";
+import { Button } from "../../components/ui/button";
 import { resolveImage } from "@/lib/images";
 
 // ----------------------------------------------------------------------

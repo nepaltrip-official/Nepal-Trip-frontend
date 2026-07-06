@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 import { InquiryDialog } from "./InquiryDialog";
 import { LoginModal } from "./LoginModal";
 
-export function Navbar({ brand = "Nepal Trip" }) {
+export function Navbar({ brand = "Nepal Trip", isAdmin = true }) {
     const [open, setOpen] = useState(false);
     const location = useLocation();
     const pathname = location.pathname;
@@ -55,6 +55,19 @@ export function Navbar({ brand = "Nepal Trip" }) {
                     ))}
 
                     <div className="ml-2 flex items-center gap-3 border-l border-border/40 pl-6">
+
+                        {/* Desktop Admin Shield */}
+                        {isAdmin && (
+                            <Link
+                                to="/admin"
+                                title="Admin Dashboard"
+                                className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-red-50 px-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-500"
+                            >
+                                <Shield className="h-4 w-4" />
+                                <span className="hidden lg:inline">Admin</span>
+                            </Link>
+                        )}
+
                         <InquiryDialog
                             trigger={
                                 <button className="inline-flex h-9 items-center justify-center rounded-md bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 ease-in-out hover:bg-[#E55B05] hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
@@ -72,15 +85,30 @@ export function Navbar({ brand = "Nepal Trip" }) {
                     </div>
                 </nav>
 
-                <button
-                    className="md:hidden text-foreground transition-transform duration-300 ease-in-out active:scale-90"
-                    onClick={() => setOpen(!open)}
-                >
-                    {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                </button>
+                {/* Mobile Right-side Controls (Shield + Hamburger) */}
+                <div className="flex items-center gap-4 md:hidden">
+                    {/* Mobile Admin Shield - Kept outside the dropdown */}
+                    {isAdmin && (
+                        <Link
+                            to="/admin"
+                            title="Admin Dashboard"
+                            className="text-red-600 transition-transform active:scale-95 drop-shadow-sm"
+                            onClick={() => setOpen(false)}
+                        >
+                            <Shield className="h-6 w-6" fill="currentColor" fillOpacity={0.1} />
+                        </Link>
+                    )}
+
+                    <button
+                        className="text-foreground transition-transform duration-300 ease-in-out active:scale-90"
+                        onClick={() => setOpen(!open)}
+                    >
+                        {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                    </button>
+                </div>
             </div>
 
-            {/* Mobile Nav */}
+            {/* Mobile Nav Dropdown */}
             <div
                 className={`md:hidden grid transition-[grid-template-rows] duration-300 ease-in-out ${open ? "grid-rows-[1fr] border-b border-border/40" : "grid-rows-[0fr]"
                     }`}

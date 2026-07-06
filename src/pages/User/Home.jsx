@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Compass, Heart, ShieldCheck, Star, Map } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { InquiryDialog } from "../components/site/InquiryDialog";
+import { Button } from "../../components/ui/button";
+import { InquiryDialog } from "../../components/site/InquiryDialog";
 
 // --- Isolated Skeletons ---
 

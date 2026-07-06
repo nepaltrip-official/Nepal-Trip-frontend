@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Clock, IndianRupee, Info, Filter, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Input } from "../components/ui/input";
+import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 
 const CATEGORIES = ["All", "Mountains", "Beach", "Nature", "Honeymoon", "Heritage", "Culture"];
