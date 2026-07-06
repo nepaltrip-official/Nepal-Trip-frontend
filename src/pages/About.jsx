@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 export default function About() {
     const [settings, setSettings] = useState({
-        brand_name: "Wanderlust Travels",
+        brand_name: "Nepal Trip",
         about_title: "About us",
         about_body: "We are a passionate team of travel curators helping thousands of travelers discover the world since 2015.",
     });
