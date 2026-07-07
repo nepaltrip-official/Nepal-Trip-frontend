@@ -50,8 +50,29 @@ function ScrollToTop() {
 // 4. Fallback Loader
 // ==========================================
 const PageLoader = () => (
-  <div className="flex h-screen w-full items-center justify-center bg-[#FDFBF7]">
-    <div className="font-serif text-xl text-muted-foreground animate-pulse">Loading...</div>
+  <div className="fixed inset-0 z-100 flex h-screen w-full flex-col items-center justify-center bg-[#FDFBF7]">
+    <div className="flex flex-col items-center justify-center gap-6">
+
+      {/* Skeleton Ring Wrapper */}
+      <div className="relative flex items-center justify-center h-32 w-32 md:h-40 md:w-40 rounded-full bg-linear-to-r from-slate-300 via-slate-100 to-slate-300 bg-size-[400%_100%] animate-[shimmer_1.5s_infinite_linear]">
+
+        {/* Inner circle cutout to make it a ring (background matches page bg) */}
+        <div className="flex items-center justify-center h-[calc(100%-12px)] w-[calc(100%-12px)] rounded-full bg-[#FDFBF7]">
+          {/* Skeleton 'N' */}
+          <span className="text-6xl md:text-7xl font-sans font-black tracking-tighter text-transparent bg-clip-text bg-linear-to-r from-slate-300 via-slate-100 to-slate-300 bg-size-[400%_100%] animate-[shimmer_1.5s_infinite_linear]">
+            N
+          </span>
+        </div>
+      </div>
+
+      {/* Skeleton Style Subtext */}
+      <div>
+        <span className="text-sm md:text-base font-sans font-extrabold tracking-[0.3em] uppercase text-transparent bg-clip-text bg-linear-to-r from-slate-300 via-slate-100 to-slate-300 bg-size-[400%_100%] animate-[shimmer_1.5s_infinite_linear]">
+          Nepal Trip
+        </span>
+      </div>
+
+    </div>
   </div>
 );
 
