@@ -6,6 +6,7 @@ import { Footer } from './components/site/Footer';
 import { AdminLayout } from './components/admin/AdminLayout'; // Adjust path as needed
 import './App.css';
 import RegisteredUsers from './pages/Admin/RegisteredUsers';
+import { SuperAdminLayout } from './components/superadmin/SuperAdminLayout';
 
 // ==========================================
 // 1. Lazy Load Public Pages
@@ -25,6 +26,15 @@ const Discover = lazy(() => import('./pages/User/Discover'));
 const AdminAnalytics = lazy(() => import('./pages/Admin/AdminAnalytics'));
 const InquiryDesk = lazy(() => import('./pages/Admin/InquiryDesk'));
 const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
+
+// ==========================================
+// 3. Lazy Load Super Admin Pages
+// ==========================================
+const SuperAdminAnalytics = lazy(() => import('./pages/SuperAdmin/SuperAdminAnalytics'));
+const SuperAdminInquiries = lazy(() => import('./pages/SuperAdmin/SuperAdminInquiries'));
+const SuperAdminUsers = lazy(() => import('./pages/SuperAdmin/SuperAdminUsers'));
+const SuperAdminSettings = lazy(() => import('./pages/SuperAdmin/SuperAdminSettings'));
+
 // ==========================================
 // 3. Global Scroll To Top
 // ==========================================
@@ -99,6 +109,14 @@ function App() {
             <Route path="users" element={<RegisteredUsers />} />
             <Route path="inquiries" element={<InquiryDesk />} />
             <Route path="settings" element={<AdminSettings />} />
+          </Route>
+
+          {/* --- SUPER ADMIN ROUTES --- */}
+          <Route path="/superadmin" element={<SuperAdminLayout />}>
+            <Route index element={<SuperAdminAnalytics />} />
+            <Route path="inquiries" element={<SuperAdminInquiries />} />
+            <Route path="users" element={<SuperAdminUsers />} />
+            <Route path="settings" element={<SuperAdminSettings />} />
           </Route>
 
           {/* --- 404 NOT FOUND --- */}

@@ -4,7 +4,7 @@ import { Menu, X, Shield } from "lucide-react";
 import { InquiryDialog } from "./InquiryDialog";
 import { LoginModal } from "./LoginModal";
 
-export function Navbar({ brand = "Nepal Trip", isAdmin = true }) {
+export function Navbar({ brand = "Nepal Trip", isAdmin = true, isSuperAdmin = true }) {
     const [open, setOpen] = useState(false);
     const location = useLocation();
     const pathname = location.pathname;
@@ -55,9 +55,20 @@ export function Navbar({ brand = "Nepal Trip", isAdmin = true }) {
                     ))}
 
                     <div className="ml-2 flex items-center gap-3 border-l border-border/40 pl-6">
+                        {/* Desktop Super Admin Shield */}
+                        {isSuperAdmin && (
+                            <Link
+                                to="/superadmin"
+                                title="Super Admin Dashboard"
+                                className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-purple-50 px-3 text-sm font-semibold text-purple-600 transition-colors hover:bg-purple-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-500"
+                            >
+                                <Shield className="h-4 w-4" />
+                                <span className="hidden lg:inline">Super Admin</span>
+                            </Link>
+                        )}
 
                         {/* Desktop Admin Shield */}
-                        {isAdmin && (
+                        {isAdmin && !isSuperAdmin && (
                             <Link
                                 to="/admin"
                                 title="Admin Dashboard"
@@ -87,8 +98,20 @@ export function Navbar({ brand = "Nepal Trip", isAdmin = true }) {
 
                 {/* Mobile Right-side Controls (Shield + Hamburger) */}
                 <div className="flex items-center gap-4 md:hidden">
-                    {/* Mobile Admin Shield - Kept outside the dropdown */}
-                    {isAdmin && (
+                    {/* Mobile Super Admin Shield */}
+                    {isSuperAdmin && (
+                        <Link
+                            to="/superadmin"
+                            title="Super Admin Dashboard"
+                            className="text-purple-600 transition-transform active:scale-95 drop-shadow-sm"
+                            onClick={() => setOpen(false)}
+                        >
+                            <Shield className="h-6 w-6" fill="currentColor" fillOpacity={0.1} />
+                        </Link>
+                    )}
+
+                    {/* Mobile Admin Shield */}
+                    {isAdmin && !isSuperAdmin && (
                         <Link
                             to="/admin"
                             title="Admin Dashboard"
