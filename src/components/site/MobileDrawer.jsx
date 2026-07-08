@@ -87,13 +87,28 @@ export function MobileDrawer({ isOpen, onClose, user, isAuthenticated, handleLog
                 {isAuthenticated ? (
                     <div className="flex items-center justify-between rounded-xl bg-muted/40 p-3.5 border border-border/40">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FA6D16] text-white font-bold text-base shadow-xs">{initial}</div>
+                            {/* ✨ UPDATED: Logic to show profile pic if it exists, otherwise the initial */}
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FA6D16] text-white font-bold text-base shadow-xs overflow-hidden">
+                                {user?.profilePic ? (
+                                    <img
+                                        src={user.profilePic}
+                                        alt={user.name}
+                                        referrerPolicy="no-referrer"
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    initial
+                                )}
+                            </div>
+
                             <div className="flex flex-col">
                                 <span className="text-sm font-bold leading-tight">{user?.name}</span>
                                 <span className="text-xs text-muted-foreground truncate max-w-45 mt-0.5">{user?.email}</span>
                             </div>
                         </div>
-                        <button onClick={() => executeAction("logout")} className="rounded-xl p-2 text-red-600 bg-red-50 hover:bg-red-100 transition-colors"><LogOut className="h-4 w-4" /></button>
+                        <button onClick={() => executeAction("logout")} className="rounded-xl p-2 text-red-600 bg-red-50 hover:bg-red-100 transition-colors">
+                            <LogOut className="h-4 w-4" />
+                        </button>
                     </div>
                 ) : (
                     <button
@@ -114,8 +129,8 @@ export function MobileDrawer({ isOpen, onClose, user, isAuthenticated, handleLog
                                 key={n.to}
                                 onClick={() => executeAction("navigate", n.to)}
                                 className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all active:scale-95 ${isActive
-                                        ? "border-[#FA6D16] bg-[#FA6D16]/10 text-[#FA6D16]" // Active Orange State
-                                        : "border-border/30 bg-muted/10 text-foreground"    // Default State
+                                    ? "border-[#FA6D16] bg-[#FA6D16]/10 text-[#FA6D16]" // Active Orange State
+                                    : "border-border/30 bg-muted/10 text-foreground"    // Default State
                                     }`}
                             >
                                 <div className="flex items-center gap-2.5">
