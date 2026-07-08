@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,6 +8,10 @@ import { AdminLayout } from './components/admin/AdminLayout';
 import './App.css';
 import RegisteredUsers from './pages/Admin/RegisteredUsers';
 import { SuperAdminLayout } from './components/superadmin/SuperAdminLayout';
+
+import { useDispatch } from 'react-redux';
+import { setCredentials, logOutState } from './store/slices/authSlice';
+import api from './api/axios';
 
 // PWA Virtual Register Hook
 import { useRegisterSW } from 'virtual:pwa-register/react';
@@ -125,12 +129,41 @@ function PublicLayout() {
 // 8. Main App Component
 // ==========================================
 function App() {
+  const dispatch = useDispatch();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // ✨ THE FIX: Prevents React 18 StrictMode from double-firing the refresh route
+  const hasFetched = useRef(false);
+
+  useEffect(() => {
+    // If this effect has already run, exit immediately
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    const verifyUserSession = async () => {
+      try {
+        const { data } = await api.post('/auth/refresh-token');
+        dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+      } catch (error) {
+        dispatch(logOutState());
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    verifyUserSession();
+  }, [dispatch]);
+
+  // Show your loader while checking auth in the background
+  if (isCheckingAuth) {
+    return <PageLoader />;
+  }
+
   return (
     <BrowserRouter>
       <ScrollToTop />
       <UpdateNotification />
 
-      {/* React Toastify configuration matching the app theme with a running progress bar */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -141,7 +174,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light" /* Must be "light" so our custom CSS background can take over */
+        theme="light"
         closeButton={false}
       />
 

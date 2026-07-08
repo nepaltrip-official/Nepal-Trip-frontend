@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useGoogleLogin } from '@react-oauth/google'; // ✨ New Google Hook
 
 import api from "../../api/axios";
 import { setCredentials } from "../../store/slices/authSlice";
@@ -120,14 +121,36 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
         }
     };
 
+    // ✨ The New Native Google Login Handler
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            try {
+                setLoading(true);
+                const { data } = await api.post('/auth/google', {
+                    access_token: tokenResponse.access_token
+                });
+
+                dispatch(setCredentials({ user: data.user, accessToken: data.accessToken }));
+                toast.success(data.message || "Welcome!");
+                handleOpenChangeWrapper(false);
+            } catch (error) {
+                console.error("Google Sign-in error:", error);
+                toast.error("Google sign-in failed. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        },
+        onError: () => {
+            toast.error("Google login popup closed or failed.");
+        }
+    });
+
     return (
         <Dialog open={currentOpen} onOpenChange={handleOpenChangeWrapper}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-            {/* ✨ OUTER WRAPPER: Handles the smooth animation, fixed positioning, and hides overflow */}
             <DialogContent className="fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-120 -translate-x-1/2 -translate-y-1/2 p-0 overflow-hidden rounded-3xl border border-border/50 bg-background shadow-2xl duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-[0.98] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
 
-                {/* ✨ INNER WRAPPER: Handles the scrolling and padding independently */}
                 <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto px-8 py-6 sm:px-10 sm:py-8 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-border">
 
                     <div className="flex flex-col items-center text-center mb-5">
@@ -137,7 +160,13 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
                         </h2>
                     </div>
 
-                    <Button type="button" disabled={loading} className="w-full h-11 rounded-full font-semibold border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground shadow-sm transition-colors duration-200">
+                    {/* ✨ Updated Google Button to trigger the hook */}
+                    <Button
+                        type="button"
+                        onClick={() => handleGoogleLogin()}
+                        disabled={loading}
+                        className="w-full h-11 rounded-full font-semibold border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground shadow-sm transition-colors duration-200"
+                    >
                         <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
