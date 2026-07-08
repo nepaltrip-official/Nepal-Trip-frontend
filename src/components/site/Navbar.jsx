@@ -61,6 +61,9 @@ export function Navbar({ brand = "Nepal Trip" }) {
         { label: "Contact Base", to: "/contact", icon: Phone },
     ];
 
+    // Determine if any dropdown link is currently active to highlight the parent 'Explore' tab
+    const isExploreActive = exploreNav.some((n) => pathname === n.to);
+
     const handleDrawerAction = (action, target) => {
         setIsMobileMenuOpen(false); // Close the mobile drawer first
 
@@ -87,23 +90,47 @@ export function Navbar({ brand = "Nepal Trip" }) {
                     {/* Desktop Layout links (>= md) */}
                     <nav className="hidden items-center gap-6 md:flex">
                         {primaryNav.map((n) => (
-                            <Link key={n.to} to={n.to} className={`relative text-sm font-medium transition-all duration-300 ease-in-out hover:text-foreground ${pathname === n.to ? "text-foreground" : "text-muted-foreground"}`}>
+                            <Link
+                                key={n.to}
+                                to={n.to}
+                                className={`relative text-sm font-medium transition-all duration-300 ease-in-out hover:text-[#FA6D16] ${pathname === n.to ? "text-[#FA6D16]" : "text-muted-foreground"}`}
+                            >
                                 {n.label}
-                                <span className={`absolute -bottom-1 left-0 h-0.5 bg-foreground transition-all duration-300 ease-in-out ${pathname === n.to ? "w-full opacity-100" : "w-0 opacity-0"}`} />
+                                <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#FA6D16] transition-all duration-300 ease-in-out ${pathname === n.to ? "w-full opacity-100" : "w-0 opacity-0"}`} />
                             </Link>
                         ))}
 
                         <div className="group relative">
-                            <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                                Explore <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
+                            <button
+                                className={`flex items-center gap-1 text-sm font-medium transition-all duration-300 ease-in-out hover:text-[#FA6D16] ${isExploreActive ? "text-[#FA6D16]" : "text-muted-foreground"
+                                    }`}
+                            >
+                                {/* Wrap the text in a relative span so the underline only calculates width against the word */}
+                                <span className="relative">
+                                    Explore
+                                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#FA6D16] transition-all duration-300 ease-in-out ${isExploreActive ? "w-full opacity-100" : "w-0 opacity-0"}`} />
+                                </span>
+                                <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
                             </button>
+
                             <div className="absolute left-1/2 top-full mt-2 w-48 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                <div className="rounded-xl border border-border/50 bg-popover p-1.5 shadow-xl backdrop-blur-xl">
-                                    {exploreNav.map((n) => (
-                                        <Link key={n.to} to={n.to} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
-                                            <n.icon className="h-4 w-4 opacity-70" /> {n.label}
-                                        </Link>
-                                    ))}
+                                <div className="flex flex-col gap-1 rounded-xl border border-border/50 bg-popover p-1.5 shadow-xl backdrop-blur-xl">
+                                    {exploreNav.map((n) => {
+                                        const isActive = pathname === n.to;
+                                        return (
+                                            <Link
+                                                key={n.to}
+                                                to={n.to}
+                                                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-200 ${isActive
+                                                    ? "bg-[#FA6D16]/10 text-[#FA6D16] font-semibold"
+                                                    : "text-muted-foreground hover:bg-muted/80 hover:text-[#FA6D16]"
+                                                    }`}
+                                            >
+                                                <n.icon className={`h-4 w-4 transition-colors ${isActive ? "opacity-100" : "opacity-70"}`} />
+                                                {n.label}
+                                            </Link>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -163,6 +190,8 @@ export function Navbar({ brand = "Nepal Trip" }) {
                 isAuthenticated={isAuthenticated}
                 handleLogout={handleLogout}
                 exploreNav={exploreNav}
+                primaryNav={primaryNav} /* Added this */
+                pathname={pathname}     /* Added this */
                 onTriggerAction={handleDrawerAction}
             />
 
@@ -173,6 +202,7 @@ export function Navbar({ brand = "Nepal Trip" }) {
                 isDrawerOpen={isMobileMenuOpen}
                 onToggleDrawer={() => setIsMobileMenuOpen(prev => !prev)}
                 onCloseDrawer={() => setIsMobileMenuOpen(false)}
+                pathname={pathname} /* Added this */
             />
 
             <GeoLocationModal

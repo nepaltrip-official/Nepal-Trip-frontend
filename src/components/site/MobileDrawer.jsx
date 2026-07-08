@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LogOut, Shield, ChevronRight } from "lucide-react";
 
-export function MobileDrawer({ isOpen, onClose, user, isAuthenticated, handleLogout, exploreNav, onTriggerAction }) {
+// Note: Ensure `pathname` is passed from the parent Navbar component
+export function MobileDrawer({ isOpen, onClose, user, isAuthenticated, handleLogout, exploreNav, onTriggerAction, pathname }) {
     const [currentY, setCurrentY] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const [shouldRender, setShouldRender] = useState(isOpen);
@@ -104,19 +105,27 @@ export function MobileDrawer({ isOpen, onClose, user, isAuthenticated, handleLog
                 )}
 
                 <div className="grid grid-cols-2 gap-2.5 my-5">
-                    {exploreNav.map(n => (
-                        <button
-                            key={n.to}
-                            onClick={() => executeAction("navigate", n.to)}
-                            className="flex items-center justify-between p-3.5 rounded-xl border border-border/30 bg-muted/10 text-left transition-all active:scale-95"
-                        >
-                            <div className="flex items-center gap-2.5">
-                                <n.icon className="h-4 w-4 text-muted-foreground/80" />
-                                <span className="text-xs font-semibold text-foreground">{n.label}</span>
-                            </div>
-                            <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
-                        </button>
-                    ))}
+                    {exploreNav.map(n => {
+                        // Check if the current route matches this button's route
+                        const isActive = pathname === n.to;
+
+                        return (
+                            <button
+                                key={n.to}
+                                onClick={() => executeAction("navigate", n.to)}
+                                className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all active:scale-95 ${isActive
+                                        ? "border-[#FA6D16] bg-[#FA6D16]/10 text-[#FA6D16]" // Active Orange State
+                                        : "border-border/30 bg-muted/10 text-foreground"    // Default State
+                                    }`}
+                            >
+                                <div className="flex items-center gap-2.5">
+                                    <n.icon className={`h-4 w-4 ${isActive ? "text-[#FA6D16]" : "text-muted-foreground/80"}`} />
+                                    <span className="text-xs font-semibold">{n.label}</span>
+                                </div>
+                                <ChevronRight className={`h-3 w-3 ${isActive ? "text-[#FA6D16]" : "text-muted-foreground/40"}`} />
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {isAuthenticated && isAdmin && (
