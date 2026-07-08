@@ -6,13 +6,13 @@ import { Shield, LogOut, Bell, MapPin, ChevronDown, X, Info, Image, MessageSquar
 
 import { InquiryDialog } from "./InquiryDialog";
 import { LoginModal } from "./LoginModal";
-import { LocationDialog } from "../modal/LocationDialog";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { MobileDrawer } from "./MobileDrawer";
 import { useLocationEngine } from "../../hooks/useLocationEngine";
 
 import api from "../../api/axios";
 import { logOutState } from "../../store/slices/authSlice";
+import { LocationDialog } from "../modal/LocationDialog";
 
 export function Navbar({ brand = "Nepal Trip" }) {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
