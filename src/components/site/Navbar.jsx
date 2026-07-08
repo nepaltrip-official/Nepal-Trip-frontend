@@ -12,7 +12,7 @@ import { useLocationEngine } from "../../hooks/useLocationEngine";
 
 import api from "../../api/axios";
 import { logOutState } from "../../store/slices/authSlice";
-import { LocationDialog } from "../modal/LocationDialog";
+import { LocationDialog } from "../modal/LocationDialog"; 
 
 export function Navbar({ brand = "Nepal Trip" }) {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
