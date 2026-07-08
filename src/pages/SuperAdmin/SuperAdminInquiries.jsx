@@ -17,7 +17,7 @@ import {
     Trash2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserDetailModal } from "../../components/Modal/UserDetailModal";
+import { UserDetailModal } from "../../components/modal/UserDetailModal";
 
 // ==========================================
 // DUMMY DATA (Expanded with CRM Fields)

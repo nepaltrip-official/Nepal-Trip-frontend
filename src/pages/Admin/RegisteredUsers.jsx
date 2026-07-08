@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Users, Activity, Search, ShieldCheck, Mail, ChevronRight } from "lucide-react";
-import { UserDetailModal } from "../../components/Modal/UserDetailModal";
+import { UserDetailModal } from "../../components/modal/UserDetailModal";
 
 // Dummy Data
 const mockUsers = [
@@ -180,7 +180,7 @@ export default function RegisteredUsers() {
                             No users found matching your search.
                         </div>
                     )}
-                </div>  
+                </div>
             </div>
 
             {/* Render Reusable Modal */}

@@ -21,7 +21,7 @@ import {
     ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserDetailModal } from "../../components/Modal/UserDetailModal";
+import { UserDetailModal } from "../../components/modal/UserDetailModal";
 
 // ==========================================
 // DUMMY DATA (To be replaced with API calls)
