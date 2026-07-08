@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, RefreshCw, X, Lock } from "lucide-react";
 
-export function LocationDialog({ isOpen, onClose, locationData, permissionStatus, onLocateMe, isLoading }) {
+export function GeoLocationModal({ isOpen, onClose, locationData, permissionStatus, onLocateMe, isLoading }) {
     const [isPWA, setIsPWA] = useState(false);
 
     // States to control smooth mounting/unmounting

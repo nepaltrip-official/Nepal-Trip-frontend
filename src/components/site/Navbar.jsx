@@ -12,7 +12,7 @@ import { useLocationEngine } from "../../hooks/useLocationEngine";
 
 import api from "../../api/axios";
 import { logOutState } from "../../store/slices/authSlice";
-import { LocationDialog } from "../modal/LocationPopup"; 
+import { GeoLocationModal } from "../modal/GeoLocationModal";
 
 export function Navbar({ brand = "Nepal Trip" }) {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -169,13 +169,13 @@ export function Navbar({ brand = "Nepal Trip" }) {
             <LoginModal open={forceOpenLogin} onOpenChange={setForceOpenLogin} trigger={<span className="hidden" />} />
             <InquiryDialog open={forceOpenInquiry} onOpenChange={setForceOpenInquiry} trigger={<span className="hidden" />} />
 
-            <MobileBottomNav 
-    isDrawerOpen={isMobileMenuOpen} 
-    onToggleDrawer={() => setIsMobileMenuOpen(prev => !prev)} 
-    onCloseDrawer={() => setIsMobileMenuOpen(false)} 
-/>
+            <MobileBottomNav
+                isDrawerOpen={isMobileMenuOpen}
+                onToggleDrawer={() => setIsMobileMenuOpen(prev => !prev)}
+                onCloseDrawer={() => setIsMobileMenuOpen(false)}
+            />
 
-            <LocationDialog
+            <GeoLocationModal
                 isOpen={isLocationModalOpen}
                 onClose={() => setIsLocationModalOpen(false)}
                 locationData={locationData}
