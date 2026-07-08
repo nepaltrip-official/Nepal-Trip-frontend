@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify"; // <-- Updated this line
+import { toast } from "react-toastify";
 import { MapPin } from "lucide-react";
 
 const schema = z.object({
@@ -17,9 +17,25 @@ const schema = z.object({
     message: z.string().trim().max(1000).optional(),
 });
 
-export function InquiryDialog({ packageId, packageTitle, trigger }) {
-    const [open, setOpen] = useState(false);
+// ✨ Accept open and onOpenChange props from the parent Navbar
+export function InquiryDialog({ packageId, packageTitle, trigger, open: controlledOpen, onOpenChange: setControlledOpen }) {
+    // Internal state for desktop view
+    const [internalOpen, setInternalOpen] = useState(false);
+
+    // ✨ Determine if controlled by parent (Mobile) or itself (Desktop)
+    const isControlled = controlledOpen !== undefined && setControlledOpen !== undefined;
+    const currentOpen = isControlled ? controlledOpen : internalOpen;
+
     const [submitting, setSubmitting] = useState(false);
+
+    // ✨ Wrapper to handle state updates for both modes
+    const handleOpenChangeWrapper = (newOpen) => {
+        if (isControlled) {
+            setControlledOpen(newOpen);
+        } else {
+            setInternalOpen(newOpen);
+        }
+    };
 
     async function onSubmit(e) {
         e.preventDefault();
@@ -54,7 +70,7 @@ export function InquiryDialog({ packageId, packageTitle, trigger }) {
             if (!response.ok) throw new Error("Server communication error");
 
             toast.success("Inquiry sent — we'll get back to you shortly!");
-            setOpen(false);
+            handleOpenChangeWrapper(false); // ✨ Use the wrapper to close
         } catch (error) {
             toast.error("Could not send inquiry. Please check your connection and try again.");
         } finally {
@@ -63,100 +79,105 @@ export function InquiryDialog({ packageId, packageTitle, trigger }) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={currentOpen} onOpenChange={handleOpenChangeWrapper}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent
-                className="fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-2xl border border-border/50 bg-background/95 p-0 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]"
-            >
-                {/* Header Section */}
-                <div className="bg-muted/30 px-6 py-5 border-b border-border/40">
-                    <DialogTitle className="flex items-center gap-2 font-serif text-2xl tracking-tight">
-                        <MapPin className="h-5 w-5 text-[#FA6D16]" />
-                        {packageTitle ? `Inquire about ${packageTitle}` : "Send us an inquiry"}
-                    </DialogTitle>
-                    <p className="text-sm text-muted-foreground mt-1.5">
-                        Fill out the form below and our travel experts will get in touch with you.
-                    </p>
-                </div>
 
-                {/* Form Section */}
-                <form onSubmit={onSubmit} className="space-y-4 px-6 py-5">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name" className="text-sm font-medium">Full name</Label>
-                        <Input
-                            id="name"
-                            name="name"
-                            required
-                            placeholder="John Doe"
-                            className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
-                        />
+            {/* ✨ OUTER WRAPPER: Handles animation, fixed positioning, and hides overflow for sharp rounded corners */}
+            <DialogContent className="fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 p-0 overflow-hidden rounded-3xl border border-border/50 bg-background/95 shadow-2xl backdrop-blur-xl duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-[0.98] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
+
+                {/* ✨ INNER WRAPPER: Handles the scrolling independently to fix the scrollbar overlap issue */}
+                <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-border">
+
+                    {/* Header Section */}
+                    <div className="bg-muted/30 px-6 py-5 border-b border-border/40">
+                        <DialogTitle className="flex items-center gap-2 font-serif text-2xl tracking-tight">
+                            <MapPin className="h-5 w-5 text-[#FA6D16]" />
+                            {packageTitle ? `Inquire about ${packageTitle}` : "Send us an inquiry"}
+                        </DialogTitle>
+                        <p className="text-sm text-muted-foreground mt-1.5">
+                            Fill out the form below and our travel experts will get in touch with you.
+                        </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Form Section */}
+                    <form onSubmit={onSubmit} className="space-y-4 px-6 py-5">
                         <div className="grid gap-2">
-                            <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                            <Label htmlFor="name" className="text-sm font-medium">Full name</Label>
                             <Input
-                                id="email"
-                                name="email"
-                                type="email"
+                                id="name"
+                                name="name"
                                 required
-                                placeholder="john@example.com"
+                                placeholder="John Doe"
                                 className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
                             />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="phone" className="text-sm font-medium">Phone</Label>
-                            <Input
-                                id="phone"
-                                name="phone"
-                                placeholder="+1 (555) 000-0000"
-                                className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
-                            />
-                        </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                                <Input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    required
+                                    placeholder="john@example.com"
+                                    className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="phone" className="text-sm font-medium">Phone</Label>
+                                <Input
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="+1 (555) 000-0000"
+                                    className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="travel_date" className="text-sm font-medium">Travel date</Label>
+                                <Input
+                                    id="travel_date"
+                                    name="travel_date"
+                                    type="date"
+                                    className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="travelers" className="text-sm font-medium">Travelers</Label>
+                                <Input
+                                    id="travelers"
+                                    name="travelers"
+                                    type="number"
+                                    min={1}
+                                    defaultValue={2}
+                                    className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
+                                />
+                            </div>
+                        </div>
+
                         <div className="grid gap-2">
-                            <Label htmlFor="travel_date" className="text-sm font-medium">Travel date</Label>
-                            <Input
-                                id="travel_date"
-                                name="travel_date"
-                                type="date"
-                                className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
+                            <Label htmlFor="message" className="text-sm font-medium">Message (optional)</Label>
+                            <Textarea
+                                id="message"
+                                name="message"
+                                rows={2}
+                                placeholder="Tell us about your dream trip..."
+                                className="rounded-2xl resize-none transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
                             />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="travelers" className="text-sm font-medium">Travelers</Label>
-                            <Input
-                                id="travelers"
-                                name="travelers"
-                                type="number"
-                                min={1}
-                                defaultValue={2}
-                                className="h-11 rounded-2xl transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
-                            />
-                        </div>
-                    </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="message" className="text-sm font-medium">Message (optional)</Label>
-                        <Textarea
-                            id="message"
-                            name="message"
-                            rows={2}
-                            placeholder="Tell us about your dream trip..."
-                            className="rounded-2xl resize-none transition-all hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-[#FA6D16]/20"
-                        />
-                    </div>
-
-                    <Button
-                        type="submit"
-                        disabled={submitting}
-                        className="w-full h-11 mt-4 rounded-full bg-[#FA6D16] text-white hover:bg-[#E55B05] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                        {submitting ? "Sending inquiry..." : "Send inquiry"}
-                    </Button>
-                </form>
+                        <Button
+                            type="submit"
+                            disabled={submitting}
+                            className="w-full h-11 mt-4 rounded-full bg-[#FA6D16] text-white hover:bg-[#E55B05] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                            {submitting ? "Sending inquiry..." : "Send inquiry"}
+                        </Button>
+                    </form>
+                </div>
             </DialogContent>
         </Dialog>
     );

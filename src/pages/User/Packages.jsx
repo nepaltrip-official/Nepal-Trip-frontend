@@ -51,6 +51,7 @@ export default function Packages() {
     const [packages, setPackages] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
+    const [isMounted, setIsMounted] = useState(false);
 
     // UI States
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -64,6 +65,11 @@ export default function Packages() {
     const [direction, setDirection] = useState(0);
     const [hasSwiped, setHasSwiped] = useState(false);
     const wheelTimeout = useRef(null);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsMounted(true), 50);
+        return () => clearTimeout(timer); // Clean up
+    }, []);
 
     // Fetch Dummy Data
     useEffect(() => {
@@ -219,10 +225,12 @@ export default function Packages() {
     };
 
     return (
-        <div className="w-full bg-background min-h-[calc(100dvh-4rem)] flex flex-col items-center pt-2 pb-6 md:pb-4 md:pt-6 font-sans relative animate-in fade-in duration-700 overflow-hidden">
+        <div className={`w-full transition-all duration-1000 ease-out transform ${isMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}>
+            <div className="w-full bg-background min-h-[calc(100dvh-4rem)] flex flex-col items-center pt-2 pb-6 md:pb-4 md:pt-6 font-sans relative animate-in fade-in duration-700 overflow-hidden">
 
-            {/* Global style override to hide the footer specifically on mobile for this page */}
-            <style>{`
+                {/* Global style override to hide the footer specifically on mobile for this page */}
+                <style>{`
                 @media (max-width: 767px) {
                     footer {
                         display: none !important;
@@ -230,209 +238,210 @@ export default function Packages() {
                 }
             `}</style>
 
-            {/* Top Bar - Static shell loads instantly */}
-            <motion.div
-                animate={{ y: isScrolled ? -100 : 0, opacity: isScrolled ? 0 : 1 }}
-                transition={{ duration: 0.3 }}
-                className="w-full max-w-full md:max-w-5xl px-4 flex justify-between items-center z-50 mb-3 md:mb-6"
-            >
-                <div>
-                    <h1 className="text-xl md:text-3xl font-black text-foreground drop-shadow-sm tracking-tight">
-                        Explore
-                    </h1>
-                    {/* Only the trip count shimmers while loading */}
+                {/* Top Bar - Static shell loads instantly */}
+                <motion.div
+                    animate={{ y: isScrolled ? -100 : 0, opacity: isScrolled ? 0 : 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full max-w-full md:max-w-5xl px-4 flex justify-between items-center z-50 mb-3 md:mb-6"
+                >
+                    <div>
+                        <h1 className="text-xl md:text-3xl font-black text-foreground drop-shadow-sm tracking-tight">
+                            Explore
+                        </h1>
+                        {/* Only the trip count shimmers while loading */}
+                        {isLoading ? (
+                            <div className="h-3 md:h-4 w-24 bg-muted animate-pulse rounded-md mt-1.5" />
+                        ) : (
+                            <p className="text-muted-foreground text-xs md:text-base font-medium">
+                                {filteredPackages.length} {filteredPackages.length === 1 ? 'trip' : 'trips'} found
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="relative" ref={filterRef}>
+                        <button
+                            onClick={() => setIsFilterOpen(!isFilterOpen)}
+                            className="p-2.5 md:p-3.5 bg-card border border-border shadow-sm rounded-full text-foreground hover:bg-muted transition-colors"
+                        >
+                            {isFilterOpen ? <X size={20} /> : <Filter size={20} />}
+                        </button>
+
+                        <AnimatePresence>
+                            {isFilterOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="absolute top-14 right-0 w-[85vw] max-w-75 md:w-96 bg-card border border-border p-5 rounded-2xl shadow-xl flex flex-col gap-5 z-50 origin-top-right"
+                                >
+                                    <div>
+                                        <label className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Search Destination</label>
+                                        <Input
+                                            type="search"
+                                            placeholder="E.g., Maldives, Kerala..."
+                                            className="w-full h-10 text-sm"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Categories</label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {CATEGORIES.map(cat => (
+                                                <button
+                                                    key={cat}
+                                                    onClick={() => setSelectedCategory(cat)}
+                                                    className={`rounded-full px-3 py-1.5 text-xs md:text-sm font-medium transition-all ${selectedCategory === cat
+                                                        ? "bg-primary text-primary-foreground"
+                                                        : "bg-muted text-foreground hover:bg-muted/80"
+                                                        }`}
+                                                >
+                                                    {cat}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </motion.div>
+
+                {/* Immersive Deck Area - Shows skeleton if loading, else shows cards */}
+                <div className="flex-1 w-full max-w-full md:max-w-5xl relative z-10 px-3 md:px-0">
                     {isLoading ? (
-                        <div className="h-3 md:h-4 w-24 bg-muted animate-pulse rounded-md mt-1.5" />
+                        <CardSkeleton />
                     ) : (
-                        <p className="text-muted-foreground text-xs md:text-base font-medium">
-                            {filteredPackages.length} {filteredPackages.length === 1 ? 'trip' : 'trips'} found
-                        </p>
+                        <div
+                            ref={cardContainerRef}
+                            className="relative w-full h-[calc(100dvh-13rem)] min-h-100 max-h-200 md:h-[65vh] md:min-h-125 md:max-h-187.5 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/30 flex items-center justify-center shadow-2xl overscroll-x-none"
+                            onWheel={handleWheel}
+                        >
+                            {/* Mobile Swipe Hints */}
+                            {!hasSwiped && filteredPackages.length > 1 && (
+                                <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none md:hidden z-30 text-white/80 font-black text-2xl tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                                    <span className="animate-pulse">&lt;&lt;&lt;</span>
+                                    <span className="animate-pulse">&gt;&gt;&gt;</span>
+                                </div>
+                            )}
+
+                            {filteredPackages.length === 0 ? (
+                                <div className="text-center text-muted-foreground p-6">
+                                    <Info className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 opacity-30" />
+                                    <p className="text-lg md:text-xl font-bold text-foreground">No matches found</p>
+                                    <p className="text-xs md:text-sm mt-1">Try adjusting your filters.</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                                        <motion.div
+                                            key={currentIndex}
+                                            custom={direction}
+                                            variants={cardVariants}
+                                            initial="enter"
+                                            animate="center"
+                                            exit="exit"
+                                            drag="x"
+                                            dragConstraints={{ left: 0, right: 0 }}
+                                            dragElastic={0.8}
+                                            onDragEnd={handleDragEnd}
+                                            onClick={handleCardClick}
+                                            className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing will-change-transform"
+                                            style={{ touchAction: 'pan-y' }}
+                                        >
+                                            <picture className="absolute inset-0 w-full h-full bg-black">
+                                                <source media="(min-width: 768px)" srcSet={filteredPackages[currentIndex].cover_image_desktop} />
+                                                <img
+                                                    src={filteredPackages[currentIndex].cover_image_mobile}
+                                                    alt={filteredPackages[currentIndex].title}
+                                                    className="w-full h-full object-cover opacity-90 transition-transform duration-700 hover:scale-105"
+                                                    draggable="false"
+                                                />
+                                            </picture>
+
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
+
+                                            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10 pointer-events-none flex flex-col justify-end">
+                                                <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
+                                                    <span className="bg-black/50 backdrop-blur-sm text-white px-2.5 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium border border-white/10 flex items-center gap-1.5">
+                                                        <MapPin size={14} /> {filteredPackages[currentIndex].destination}
+                                                    </span>
+                                                    <span className="bg-black/50 backdrop-blur-sm text-white px-2.5 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium border border-white/10 flex items-center gap-1.5">
+                                                        <Clock size={14} /> {filteredPackages[currentIndex].duration_days}D / {filteredPackages[currentIndex].duration_nights}N
+                                                    </span>
+                                                </div>
+
+                                                <h2 className="text-2xl md:text-5xl font-bold text-white mb-2 md:mb-4 leading-tight drop-shadow-md">
+                                                    {filteredPackages[currentIndex].title}
+                                                </h2>
+
+                                                <p className="text-white/80 text-sm md:text-lg mb-5 md:mb-8 line-clamp-2 md:line-clamp-3 leading-snug max-w-3xl drop-shadow-sm">
+                                                    {filteredPackages[currentIndex].short_description}
+                                                </p>
+
+                                                <div className="flex items-center justify-between border-t border-white/20 pt-4 md:pt-6 pointer-events-auto">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-white/60 text-[10px] md:text-sm font-medium uppercase tracking-wider">Starting From</span>
+                                                        <div className="flex items-center text-white font-bold text-xl md:text-3xl drop-shadow-sm mt-0.5">
+                                                            <IndianRupee size={24} className="mr-0.5 md:mr-1" strokeWidth={2.5} />
+                                                            {filteredPackages[currentIndex].price_inr.toLocaleString('en-IN')}
+                                                        </div>
+                                                    </div>
+
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
+                                                        className="bg-[#2A5244] hover:bg-[#214136] text-white px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg transition-transform hover:scale-105 active:scale-95 shadow-xl"
+                                                    >
+                                                        View Details
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
+
+                                    {/* Desktop Navigation Arrows */}
+                                    {currentIndex > 0 && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); paginate(-1); }}
+                                            className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl transition-all hover:bg-white/30 hover:scale-110 active:scale-95"
+                                            aria-label="Previous Package"
+                                        >
+                                            <ChevronLeft className="w-8 h-8" />
+                                        </button>
+                                    )}
+                                    {currentIndex < filteredPackages.length - 1 && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); paginate(1); }}
+                                            className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl transition-all hover:bg-white/30 hover:scale-110 active:scale-95"
+                                            aria-label="Next Package"
+                                        >
+                                            <ChevronRight className="w-8 h-8" />
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     )}
                 </div>
 
-                <div className="relative" ref={filterRef}>
-                    <button
-                        onClick={() => setIsFilterOpen(!isFilterOpen)}
-                        className="p-2.5 md:p-3.5 bg-card border border-border shadow-sm rounded-full text-foreground hover:bg-muted transition-colors"
-                    >
-                        {isFilterOpen ? <X size={20} /> : <Filter size={20} />}
-                    </button>
-
-                    <AnimatePresence>
-                        {isFilterOpen && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                                transition={{ duration: 0.2 }}
-                                className="absolute top-14 right-0 w-[85vw] max-w-75 md:w-96 bg-card border border-border p-5 rounded-2xl shadow-xl flex flex-col gap-5 z-50 origin-top-right"
-                            >
-                                <div>
-                                    <label className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Search Destination</label>
-                                    <Input
-                                        type="search"
-                                        placeholder="E.g., Maldives, Kerala..."
-                                        className="w-full h-10 text-sm"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="text-[10px] md:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Categories</label>
-                                    <div className="flex flex-wrap gap-2">
-                                        {CATEGORIES.map(cat => (
-                                            <button
-                                                key={cat}
-                                                onClick={() => setSelectedCategory(cat)}
-                                                className={`rounded-full px-3 py-1.5 text-xs md:text-sm font-medium transition-all ${selectedCategory === cat
-                                                    ? "bg-primary text-primary-foreground"
-                                                    : "bg-muted text-foreground hover:bg-muted/80"
-                                                    }`}
-                                            >
-                                                {cat}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </motion.div>
-
-            {/* Immersive Deck Area - Shows skeleton if loading, else shows cards */}
-            <div className="flex-1 w-full max-w-full md:max-w-5xl relative z-10 px-3 md:px-0">
+                {/* Pagination Dots - Dynamic depending on loading state */}
                 {isLoading ? (
-                    <CardSkeleton />
+                    <DotsSkeleton />
                 ) : (
-                    <div
-                        ref={cardContainerRef}
-                        className="relative w-full h-[calc(100dvh-13rem)] min-h-100 max-h-200 md:h-[65vh] md:min-h-125 md:max-h-187.5 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-muted/30 flex items-center justify-center shadow-2xl overscroll-x-none"
-                        onWheel={handleWheel}
-                    >
-                        {/* Mobile Swipe Hints */}
-                        {!hasSwiped && filteredPackages.length > 1 && (
-                            <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none md:hidden z-30 text-white/80 font-black text-2xl tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                                <span className="animate-pulse">&lt;&lt;&lt;</span>
-                                <span className="animate-pulse">&gt;&gt;&gt;</span>
-                            </div>
-                        )}
-
-                        {filteredPackages.length === 0 ? (
-                            <div className="text-center text-muted-foreground p-6">
-                                <Info className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 opacity-30" />
-                                <p className="text-lg md:text-xl font-bold text-foreground">No matches found</p>
-                                <p className="text-xs md:text-sm mt-1">Try adjusting your filters.</p>
-                            </div>
-                        ) : (
-                            <>
-                                <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                                    <motion.div
-                                        key={currentIndex}
-                                        custom={direction}
-                                        variants={cardVariants}
-                                        initial="enter"
-                                        animate="center"
-                                        exit="exit"
-                                        drag="x"
-                                        dragConstraints={{ left: 0, right: 0 }}
-                                        dragElastic={0.8}
-                                        onDragEnd={handleDragEnd}
-                                        onClick={handleCardClick}
-                                        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing will-change-transform"
-                                        style={{ touchAction: 'pan-y' }}
-                                    >
-                                        <picture className="absolute inset-0 w-full h-full bg-black">
-                                            <source media="(min-width: 768px)" srcSet={filteredPackages[currentIndex].cover_image_desktop} />
-                                            <img
-                                                src={filteredPackages[currentIndex].cover_image_mobile}
-                                                alt={filteredPackages[currentIndex].title}
-                                                className="w-full h-full object-cover opacity-90 transition-transform duration-700 hover:scale-105"
-                                                draggable="false"
-                                            />
-                                        </picture>
-
-                                        <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
-
-                                        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10 pointer-events-none flex flex-col justify-end">
-                                            <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
-                                                <span className="bg-black/50 backdrop-blur-sm text-white px-2.5 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium border border-white/10 flex items-center gap-1.5">
-                                                    <MapPin size={14} /> {filteredPackages[currentIndex].destination}
-                                                </span>
-                                                <span className="bg-black/50 backdrop-blur-sm text-white px-2.5 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium border border-white/10 flex items-center gap-1.5">
-                                                    <Clock size={14} /> {filteredPackages[currentIndex].duration_days}D / {filteredPackages[currentIndex].duration_nights}N
-                                                </span>
-                                            </div>
-
-                                            <h2 className="text-2xl md:text-5xl font-bold text-white mb-2 md:mb-4 leading-tight drop-shadow-md">
-                                                {filteredPackages[currentIndex].title}
-                                            </h2>
-
-                                            <p className="text-white/80 text-sm md:text-lg mb-5 md:mb-8 line-clamp-2 md:line-clamp-3 leading-snug max-w-3xl drop-shadow-sm">
-                                                {filteredPackages[currentIndex].short_description}
-                                            </p>
-
-                                            <div className="flex items-center justify-between border-t border-white/20 pt-4 md:pt-6 pointer-events-auto">
-                                                <div className="flex flex-col">
-                                                    <span className="text-white/60 text-[10px] md:text-sm font-medium uppercase tracking-wider">Starting From</span>
-                                                    <div className="flex items-center text-white font-bold text-xl md:text-3xl drop-shadow-sm mt-0.5">
-                                                        <IndianRupee size={24} className="mr-0.5 md:mr-1" strokeWidth={2.5} />
-                                                        {filteredPackages[currentIndex].price_inr.toLocaleString('en-IN')}
-                                                    </div>
-                                                </div>
-
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
-                                                    className="bg-[#2A5244] hover:bg-[#214136] text-white px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg transition-transform hover:scale-105 active:scale-95 shadow-xl"
-                                                >
-                                                    View Details
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                </AnimatePresence>
-
-                                {/* Desktop Navigation Arrows */}
-                                {currentIndex > 0 && (
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); paginate(-1); }}
-                                        className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl transition-all hover:bg-white/30 hover:scale-110 active:scale-95"
-                                        aria-label="Previous Package"
-                                    >
-                                        <ChevronLeft className="w-8 h-8" />
-                                    </button>
-                                )}
-                                {currentIndex < filteredPackages.length - 1 && (
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); paginate(1); }}
-                                        className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl transition-all hover:bg-white/30 hover:scale-110 active:scale-95"
-                                        aria-label="Next Package"
-                                    >
-                                        <ChevronRight className="w-8 h-8" />
-                                    </button>
-                                )}
-                            </>
-                        )}
-                    </div>
+                    filteredPackages.length > 0 && (
+                        <div className="flex justify-center gap-1.5 md:gap-2 mt-4 md:mt-6 mb-2">
+                            {filteredPackages.map((_, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 md:w-8 bg-[#2A5244]' : 'w-1.5 md:w-2 bg-border hover:bg-border/80'}`}
+                                />
+                            ))}
+                        </div>
+                    )
                 )}
             </div>
-
-            {/* Pagination Dots - Dynamic depending on loading state */}
-            {isLoading ? (
-                <DotsSkeleton />
-            ) : (
-                filteredPackages.length > 0 && (
-                    <div className="flex justify-center gap-1.5 md:gap-2 mt-4 md:mt-6 mb-2">
-                        {filteredPackages.map((_, idx) => (
-                            <div
-                                key={idx}
-                                className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 md:w-8 bg-[#2A5244]' : 'w-1.5 md:w-2 bg-border hover:bg-border/80'}`}
-                            />
-                        ))}
-                    </div>
-                )
-            )}
         </div>
     );
 }

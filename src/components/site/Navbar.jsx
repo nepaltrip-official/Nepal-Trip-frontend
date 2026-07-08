@@ -1,27 +1,38 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { Menu, X, Shield, LogOut } from "lucide-react";
+import { Shield, LogOut, Bell, MapPin, ChevronDown, X, Info, Image, MessageSquare, Phone } from "lucide-react";
+
 import { InquiryDialog } from "./InquiryDialog";
 import { LoginModal } from "./LoginModal";
+import { LocationDialog } from "../modal/LocationDialog";
+import { MobileBottomNav } from "./MobileBottomNav";
+import { MobileDrawer } from "./MobileDrawer";
+import { useLocationEngine } from "../../hooks/useLocationEngine";
 
 import api from "../../api/axios";
 import { logOutState } from "../../store/slices/authSlice";
 
 export function Navbar({ brand = "Nepal Trip" }) {
-    const [open, setOpen] = useState(false);
-    const location = useLocation();
-    const pathname = location.pathname;
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // Pull Auth State from Redux
+    // Remote operational active trigger references to isolate sub-modal overlays
+    const [forceOpenLogin, setForceOpenLogin] = useState(false);
+    const [forceOpenInquiry, setForceOpenInquiry] = useState(false);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+    const pathname = location.pathname;
     const dispatch = useDispatch();
     const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-    const isAdmin = user?.role === "Admin" || user?.role === "SuperAdmin";
-    const isSuperAdmin = user?.role === "SuperAdmin";
+    const { locationData, permissionStatus, isLoading, fetchLocation } = useLocationEngine();
 
-    // Helper to get first name and initial
+    const isSuperAdmin = user?.role === "SuperAdmin";
+    const isAdmin = user?.role === "Admin" || user?.role === "SuperAdmin";
     const firstName = user?.name ? user.name.split(" ")[0] : "User";
     const initial = firstName.charAt(0).toUpperCase();
 
@@ -29,155 +40,164 @@ export function Navbar({ brand = "Nepal Trip" }) {
         try {
             await api.post("/auth/logout");
         } catch (error) {
-            console.error("Logout error", error);
+            console.error("Logout failure:", error);
         } finally {
             dispatch(logOutState());
             toast.success("Logged out successfully");
-            setOpen(false); // Close mobile menu if open
+            setIsMobileMenuOpen(false);
         }
     };
 
-    const nav = [
+    const primaryNav = [
         { label: "Home", to: "/" },
         { label: "Packages", to: "/packages" },
         { label: "Discover", to: "/discover" },
-        { label: "About", to: "/about" },
-        { label: "Gallery", to: "/gallery" },
-        { label: "Testimonials", to: "/testimonials" },
-        { label: "Contact", to: "/contact" },
     ];
 
+    const exploreNav = [
+        { label: "About Us", to: "/about", icon: Info },
+        { label: "Media Gallery", to: "/gallery", icon: Image },
+        { label: "Reviews", to: "/testimonials", icon: MessageSquare },
+        { label: "Contact Base", to: "/contact", icon: Phone },
+    ];
+
+    const handleDrawerAction = (action, target) => {
+        setIsMobileMenuOpen(false); // Close the mobile drawer first
+
+        setTimeout(() => {
+            if (action === "login") setForceOpenLogin(true);
+            if (action === "inquiry") setForceOpenInquiry(true);
+            if (action === "navigate") navigate(target);
+        }, 310);
+    };
+
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-90" onClick={() => setOpen(false)}>
-                    <img src="/logo.svg" alt={`${brand} Logo`} className="h-10 w-10 rounded-full object-cover shadow-sm bg-transparent" />
-                    <span className="font-serif text-2xl font-medium tracking-tight text-foreground">
-                        {brand}
-                    </span>
-                </Link>
+        <>
+            {/* Added animate-in fade-in slide-in-from-top-3 for smooth rendering context updates */}
+            <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md animate-in fade-in slide-in-from-top-3 duration-500 ease-out bill-changes">
+                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-                {/* Desktop Nav */}
-                <nav className="hidden items-center gap-6 md:flex">
-                    {nav.map((n) => (
-                        <Link key={n.to} to={n.to} className={`relative text-sm font-medium transition-all duration-300 ease-in-out hover:text-foreground ${pathname === n.to ? "text-foreground" : "text-muted-foreground"}`}>
-                            {n.label}
-                            <span className={`absolute -bottom-1 left-0 h-0.5 bg-foreground transition-all duration-300 ease-in-out ${pathname === n.to ? "w-full opacity-100" : "w-0 opacity-0"}`} />
-                        </Link>
-                    ))}
+                    <Link to="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-90 shrink-0">
+                        <img src="/logo.svg" alt={`${brand} Logo`} className="h-9 w-9 rounded-full object-cover shadow-xs bg-transparent" />
+                        <span className="font-serif text-xl font-medium tracking-tight text-foreground">
+                            {brand}
+                        </span>
+                    </Link>
 
-                    <div className="ml-2 flex items-center gap-3 border-l border-border/40 pl-6">
-                        {/* Dynamic User & Auth Controls */}
-                        {isAuthenticated ? (
-                            <div className="flex items-center gap-4">
-                                {/* Role Shields */}
-                                {isSuperAdmin ? (
-                                    <Link to="/superadmin" title="Super Admin Dashboard" className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-purple-50 px-3 text-sm font-semibold text-purple-600 transition-colors hover:bg-purple-100">
-                                        <Shield className="h-4 w-4" />
-                                        <span className="hidden lg:inline">Super Admin</span>
-                                    </Link>
-                                ) : isAdmin ? (
-                                    <Link to="/admin" title="Admin Dashboard" className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-red-50 px-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100">
-                                        <Shield className="h-4 w-4" />
-                                        <span className="hidden lg:inline">Admin</span>
-                                    </Link>
-                                ) : null}
-
-                                {/* User Profile UI */}
-                                <div className="flex items-center gap-2">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FA6D16] text-white font-bold text-sm shadow-sm">
-                                        {initial}
-                                    </div>
-                                    <span className="text-sm font-semibold text-foreground hidden xl:block">
-                                        {firstName}
-                                    </span>
-                                </div>
-
-                                {/* Logout Button */}
-                                <button
-                                    onClick={handleLogout}
-                                    title="Log out"
-                                    className="flex h-9 w-9 items-center justify-center rounded-md bg-red-50 text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 focus-visible:outline-none"
-                                >
-                                    <LogOut className="h-4 w-4" />
-                                </button>
-                            </div>
-                        ) : (
-                            <LoginModal
-                                trigger={
-                                    <button className="inline-flex h-9 items-center justify-center rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-all duration-300 hover:bg-muted hover:scale-105 active:scale-95">
-                                        Log in
-                                    </button>
-                                }
-                            />
-                        )}
-
-                        <InquiryDialog
-                            trigger={
-                                <button className="inline-flex h-9 items-center justify-center rounded-md bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 ease-in-out hover:bg-[#E55B05] hover:scale-105 active:scale-95">
-                                    Inquiry
-                                </button>
-                            }
-                        />
-                    </div>
-                </nav>
-
-                {/* Mobile Right-side Controls */}
-                <div className="flex items-center gap-4 md:hidden">
-                    {isAuthenticated && isSuperAdmin && (
-                        <Link to="/superadmin" className="text-purple-600 transition-transform active:scale-95" onClick={() => setOpen(false)}>
-                            <Shield className="h-6 w-6" fill="currentColor" fillOpacity={0.1} />
-                        </Link>
-                    )}
-                    {isAuthenticated && isAdmin && !isSuperAdmin && (
-                        <Link to="/admin" className="text-red-600 transition-transform active:scale-95" onClick={() => setOpen(false)}>
-                            <Shield className="h-6 w-6" fill="currentColor" fillOpacity={0.1} />
-                        </Link>
-                    )}
-                    <button className="text-foreground transition-transform duration-300 ease-in-out active:scale-90" onClick={() => setOpen(!open)}>
-                        {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                    </button>
-                </div>
-            </div>
-
-            {/* Mobile Nav Dropdown */}
-            <div className={`md:hidden grid transition-[grid-template-rows] duration-300 ease-in-out ${open ? "grid-rows-[1fr] border-b border-border/40" : "grid-rows-[0fr]"}`}>
-                <div className="overflow-hidden">
-                    <nav className="flex flex-col space-y-2 px-4 py-4 bg-background">
-                        {/* Mobile User Profile if Logged In */}
-                        {isAuthenticated && (
-                            <div className="mb-2 flex items-center justify-between rounded-lg bg-muted/30 p-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FA6D16] text-white font-bold">
-                                        {initial}
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-sm font-semibold">{user?.name}</span>
-                                        <span className="text-xs text-muted-foreground">{user?.email}</span>
-                                    </div>
-                                </div>
-                                <button onClick={handleLogout} className="rounded-md p-2 text-red-600 hover:bg-red-50">
-                                    <LogOut className="h-5 w-5" />
-                                </button>
-                            </div>
-                        )}
-
-                        {nav.map((n) => (
-                            <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ease-in-out ${pathname === n.to ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}`}>
+                    {/* Desktop Layout links (>= md) */}
+                    <nav className="hidden items-center gap-6 md:flex">
+                        {primaryNav.map((n) => (
+                            <Link key={n.to} to={n.to} className={`relative text-sm font-medium transition-all duration-300 ease-in-out hover:text-foreground ${pathname === n.to ? "text-foreground" : "text-muted-foreground"}`}>
                                 {n.label}
+                                <span className={`absolute -bottom-1 left-0 h-0.5 bg-foreground transition-all duration-300 ease-in-out ${pathname === n.to ? "w-full opacity-100" : "w-0 opacity-0"}`} />
                             </Link>
                         ))}
 
-                        <div className="mt-2 flex flex-col gap-3 border-t border-border/40 pt-4 pb-2">
-                            <InquiryDialog trigger={<button className="inline-flex w-full h-10 items-center justify-center rounded-md bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 ease-in-out hover:bg-[#E55B05] active:scale-95">Inquiry</button>} />
-
-                            {!isAuthenticated && (
-                                <LoginModal trigger={<button className="inline-flex w-full h-10 items-center justify-center rounded-md border border-foreground bg-transparent px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-all duration-300 hover:bg-muted active:scale-95">Log in</button>} />
-                            )}
+                        <div className="group relative">
+                            <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                                Explore <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
+                            </button>
+                            <div className="absolute left-1/2 top-full mt-2 w-48 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <div className="rounded-xl border border-border/50 bg-popover p-1.5 shadow-xl backdrop-blur-xl">
+                                    {exploreNav.map((n) => (
+                                        <Link key={n.to} to={n.to} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                                            <n.icon className="h-4 w-4 opacity-70" /> {n.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </nav>
+
+                    <div className="flex items-center gap-2">
+                        {/* Location Access Banner Widget */}
+                        <button
+                            onClick={() => setIsLocationModalOpen(true)}
+                            className={`flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold tracking-tight border transition-all active:scale-95 ${permissionStatus === "denied"
+                                ? "bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
+                                : "bg-muted/60 border-border/40 text-foreground hover:bg-muted"
+                                }`}
+                        >
+                            <MapPin className={`h-3.5 w-3.5 ${permissionStatus === "denied" ? "text-red-500 animate-pulse" : "text-[#FA6D16]"}`} />
+                            <span className="max-w-22.5 sm:max-w-32.5 truncate">
+                                {permissionStatus === "denied" ? "Location Off" : locationData ? locationData.district : "Locating..."}
+                            </span>
+                        </button>
+
+                        <button onClick={() => setIsNotificationOpen(true)} className="relative flex h-8 w-8 items-center justify-center rounded-full border border-border/30 text-foreground bg-background/50 hover:bg-muted transition-all">
+                            <Bell className="h-4 w-4" />
+                            <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
+                        </button>
+
+                        {/* Desktop Controls Panel Entry */}
+                        <div className="hidden md:flex items-center gap-3 border-l border-border/40 pl-3">
+                            {isAuthenticated ? (
+                                <div className="flex items-center gap-3">
+                                    {isSuperAdmin && (
+                                        <Link to="/superadmin" className="inline-flex h-9 items-center justify-center rounded-lg bg-purple-50 px-3 text-xs font-bold text-purple-600 hover:bg-purple-100">
+                                            Super Admin
+                                        </Link>
+                                    )}
+                                    {isAdmin && !isSuperAdmin && (
+                                        <Link to="/admin" className="inline-flex h-9 items-center justify-center rounded-lg bg-red-50 px-3 text-xs font-bold text-red-600 hover:bg-red-100">
+                                            Admin
+                                        </Link>
+                                    )}
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FA6D16] text-white font-bold text-xs">{initial}</div>
+                                    <button onClick={handleLogout} className="flex h-8 w-8 items-center justify-center rounded-lg border bg-red-50 text-red-600 hover:bg-red-100"><LogOut className="h-3.5 w-3.5" /></button>
+                                </div>
+                            ) : (
+                                <LoginModal trigger={<button className="inline-flex h-9 items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted transition-all">Log in</button>} />
+                            )}
+                            <InquiryDialog trigger={<button className="inline-flex h-9 items-center justify-center rounded-lg bg-[#FA6D16] px-4 py-2 text-sm font-medium text-white hover:bg-[#E55B05] transition-all">Inquiry</button>} />
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <MobileDrawer
+                isOpen={isMobileMenuOpen}
+                onClose={() => setIsMobileMenuOpen(false)}
+                user={user}
+                isAuthenticated={isAuthenticated}
+                handleLogout={handleLogout}
+                exploreNav={exploreNav}
+                onTriggerAction={handleDrawerAction}
+            />
+
+            <LoginModal open={forceOpenLogin} onOpenChange={setForceOpenLogin} trigger={<span className="hidden" />} />
+            <InquiryDialog open={forceOpenInquiry} onOpenChange={setForceOpenInquiry} trigger={<span className="hidden" />} />
+
+            <MobileBottomNav 
+    isDrawerOpen={isMobileMenuOpen} 
+    onToggleDrawer={() => setIsMobileMenuOpen(prev => !prev)} 
+    onCloseDrawer={() => setIsMobileMenuOpen(false)} 
+/>
+
+            <LocationDialog
+                isOpen={isLocationModalOpen}
+                onClose={() => setIsLocationModalOpen(false)}
+                locationData={locationData}
+                permissionStatus={permissionStatus}
+                onLocateMe={fetchLocation}
+                isLoading={isLoading}
+            />
+
+            {/* Slide Notification Board Overlay */}
+            <div className={`fixed inset-0 z-120 transition-opacity duration-300 ${isNotificationOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}>
+                <div className="absolute inset-0 bg-background/60 backdrop-blur-xs" onClick={() => setIsNotificationOpen(false)} />
+                <div className={`fixed right-0 top-0 h-full w-full max-w-sm bg-card shadow-2xl border-l border-border/40 transition-transform duration-300 ease-in-out transform ${isNotificationOpen ? "translate-x-0" : "translate-x-full"}`}>
+                    <div className="flex items-center justify-between border-b p-4">
+                        <h2 className="font-serif text-base font-bold">Notifications</h2>
+                        <button onClick={() => setIsNotificationOpen(false)} className="p-1 rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
+                    </div>
+                    <div className="flex h-3/4 flex-col items-center justify-center text-center opacity-70 p-6">
+                        <Bell className="mb-4 h-9 w-9 text-muted-foreground animate-pulse" />
+                        <p className="text-xs font-semibold">Inbox Up to Date</p>
+                    </div>
                 </div>
             </div>
-        </header>
+        </>
     );
 }

@@ -42,6 +42,12 @@ const TestimonialsMasonrySkeleton = () => (
 export default function Testimonials() {
     const [isLoading, setIsLoading] = useState(true);
     const [items, setItems] = useState([]);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsMounted(true), 50);
+        return () => clearTimeout(timer); // Clean up
+    }, []);
 
     useEffect(() => {
         document.title = "Testimonials — NepalTrip";
@@ -107,75 +113,78 @@ export default function Testimonials() {
     };
 
     return (
-        <div className="w-full bg-background min-h-[calc(100dvh-4rem)] pt-6 pb-20 font-sans">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className={`w-full transition-all duration-1000 ease-out transform ${isMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}>
+            <div className="w-full bg-background min-h-[calc(100dvh-4rem)] pt-6 pb-20 font-sans">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-                {/* Header Section - Static, loads instantly */}
-                <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-                    <p className="font-serif text-xs md:text-sm uppercase tracking-widest text-primary mb-2">
-                        Kind Words
-                    </p>
-                    <h1 className="font-serif text-3xl md:text-5xl font-black text-foreground tracking-tight mb-4">
-                        Traveler Stories
-                    </h1>
-                    <p className="text-muted-foreground text-sm md:text-base">
-                        Don't just take our word for it. Read what our guests have to say about their Himalayan adventures with us.
-                    </p>
-                </div>
-
-                {/* Masonry Layout for varied-height cards */}
-                {isLoading ? (
-                    <TestimonialsMasonrySkeleton />
-                ) : (
-                    <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 animate-in fade-in duration-700">
-                        {items.map((t, idx) => (
-                            <motion.div
-                                key={t.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-50px" }}
-                                transition={{ duration: 0.5, delay: (idx % 3) * 0.15 }}
-                                className="break-inside-avoid relative overflow-hidden rounded-3xl border border-border/50 bg-card p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                {/* Watermark Quote Icon */}
-                                <Quote className="absolute -top-4 -right-4 h-24 w-24 text-muted/20 -rotate-12 pointer-events-none" />
-
-                                <div className="relative z-10">
-                                    {/* Rating Stars */}
-                                    <div className="flex gap-1 text-amber-500 mb-4">
-                                        {Array.from({ length: 5 }).map((_, i) => (
-                                            <Star
-                                                key={i}
-                                                size={16}
-                                                className={i < t.rating ? "fill-amber-500" : "fill-muted text-muted"}
-                                            />
-                                        ))}
-                                    </div>
-
-                                    {/* Review Text */}
-                                    <p className="leading-relaxed text-foreground text-sm md:text-base font-medium mb-6">
-                                        "{t.message}"
-                                    </p>
-
-                                    {/* Traveler Profile Footer */}
-                                    <div className="flex items-center gap-3 pt-4 border-t border-border/50">
-                                        <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0">
-                                            {getInitials(t.name)}
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-sm text-foreground">{t.name}</span>
-                                            {t.location && (
-                                                <span className="text-xs text-muted-foreground font-medium">
-                                                    {t.location}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
+                    {/* Header Section - Static, loads instantly */}
+                    <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
+                        <p className="font-serif text-xs md:text-sm uppercase tracking-widest text-primary mb-2">
+                            Kind Words
+                        </p>
+                        <h1 className="font-serif text-3xl md:text-5xl font-black text-foreground tracking-tight mb-4">
+                            Traveler Stories
+                        </h1>
+                        <p className="text-muted-foreground text-sm md:text-base">
+                            Don't just take our word for it. Read what our guests have to say about their Himalayan adventures with us.
+                        </p>
                     </div>
-                )}
+
+                    {/* Masonry Layout for varied-height cards */}
+                    {isLoading ? (
+                        <TestimonialsMasonrySkeleton />
+                    ) : (
+                        <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 animate-in fade-in duration-700">
+                            {items.map((t, idx) => (
+                                <motion.div
+                                    key={t.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    transition={{ duration: 0.5, delay: (idx % 3) * 0.15 }}
+                                    className="break-inside-avoid relative overflow-hidden rounded-3xl border border-border/50 bg-card p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    {/* Watermark Quote Icon */}
+                                    <Quote className="absolute -top-4 -right-4 h-24 w-24 text-muted/20 -rotate-12 pointer-events-none" />
+
+                                    <div className="relative z-10">
+                                        {/* Rating Stars */}
+                                        <div className="flex gap-1 text-amber-500 mb-4">
+                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                <Star
+                                                    key={i}
+                                                    size={16}
+                                                    className={i < t.rating ? "fill-amber-500" : "fill-muted text-muted"}
+                                                />
+                                            ))}
+                                        </div>
+
+                                        {/* Review Text */}
+                                        <p className="leading-relaxed text-foreground text-sm md:text-base font-medium mb-6">
+                                            "{t.message}"
+                                        </p>
+
+                                        {/* Traveler Profile Footer */}
+                                        <div className="flex items-center gap-3 pt-4 border-t border-border/50">
+                                            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold text-xs shrink-0">
+                                                {getInitials(t.name)}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-sm text-foreground">{t.name}</span>
+                                                {t.location && (
+                                                    <span className="text-xs text-muted-foreground font-medium">
+                                                        {t.location}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

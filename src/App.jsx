@@ -114,7 +114,9 @@ function PublicLayout() {
       <main className="flex-1 animate-in fade-in duration-700">
         <Outlet />
       </main>
-      <Footer settings={settings} />
+      <div className="hidden md:block">
+        <Footer settings={settings} />
+      </div>
     </div>
   );
 }
