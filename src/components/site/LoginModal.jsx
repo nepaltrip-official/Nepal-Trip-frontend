@@ -10,7 +10,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 import api from "../../api/axios";
 import { setCredentials } from "../../store/slices/authSlice";
-import { ForgotPasswordView } from "../modal/ForgotPasswordModal"; 
+import { ForgotPasswordView } from "../modal/ForgotPasswordModal";
 
 export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setControlledOpen }) {
     const dispatch = useDispatch();
@@ -122,9 +122,13 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
                 <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto px-8 py-6 sm:px-10 sm:py-8 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/60 hover:[&::-webkit-scrollbar-thumb]:bg-border">
 
                     {/* ✨ FLOW 1: AUTHENTICATION (LOGIN / SIGNUP) */}
-                    <div className={`grid transition-[grid-template-rows,opacity,transform] duration-500 ease-in-out ${activeFlow === 'auth' ? "grid-rows-[1fr] opacity-100 translate-x-0" : "grid-rows-[0fr] opacity-0 -translate-x-4"}`}>
+                    <div
+                        className={`grid transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] transform-gpu ${activeFlow === 'auth'
+                            ? "grid-rows-[1fr] opacity-100 translate-x-0 scale-100 pointer-events-auto"
+                            : "grid-rows-[0fr] opacity-0 -translate-x-12 scale-95 pointer-events-none"
+                            }`}
+                    >
                         <div className="overflow-hidden">
-
                             <div className="flex flex-col items-center text-center mb-5">
                                 <img src="/logo.svg" alt="Nepal Trip Logo" className="h-12 w-12 rounded-full object-cover shadow-sm mb-3" />
                                 <h2 className="text-[32px] leading-tight font-bold tracking-[-0.04em] text-foreground">
@@ -215,7 +219,12 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
                     </div>
 
                     {/* ✨ FLOW 2: FORGOT PASSWORD */}
-                    <div className={`grid transition-[grid-template-rows,opacity,transform] duration-500 ease-in-out ${activeFlow === 'forgot' ? "grid-rows-[1fr] opacity-100 translate-x-0" : "grid-rows-[0fr] opacity-0 translate-x-4"}`}>
+                    <div
+                        className={`grid transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] transform-gpu ${activeFlow === 'forgot'
+                            ? "grid-rows-[1fr] opacity-100 translate-x-0 scale-100 pointer-events-auto"
+                            : "grid-rows-[0fr] opacity-0 translate-x-12 scale-95 pointer-events-none"
+                            }`}
+                    >
                         <div className="overflow-hidden">
                             <ForgotPasswordView
                                 onBackToLogin={() => setActiveFlow('auth')}
