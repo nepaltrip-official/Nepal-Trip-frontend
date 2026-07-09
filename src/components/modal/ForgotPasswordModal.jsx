@@ -165,8 +165,7 @@ export function ForgotPasswordView({ onBackToLogin, onSuccess }) {
                 <form onSubmit={handleSendOtp} className="animate-in fade-in slide-in-from-right-4 duration-500">
                     <div className="relative pb-6">
                         <Label htmlFor="reset-email" className="text-[13px] font-semibold pl-1">Email Address</Label>
-                        <Input id="reset-email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErrors({}); }} placeholder="name@example.com" className={`h-11 rounded-2xl transition-all ${errors.email ? 'border-red-500' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16]'}`} />
-                        {errors.email && <span className="absolute bottom-1 left-1 text-[11px] text-red-500">{errors.email}</span>}
+                        <Input id="reset-email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErrors({}); }} placeholder="name@example.com" className={`h-11 rounded-2xl transition-all ${errors.email ? 'border-red-500 focus-visible:ring-1 focus-visible:ring-red-500 focus-visible:ring-offset-0' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0'}`} />                        {errors.email && <span className="absolute bottom-1 left-1 text-[11px] text-red-500">{errors.email}</span>}
                     </div>
                     <Button type="submit" disabled={loading} className="w-full h-11 rounded-full bg-[#FA6D16] text-white font-semibold hover:bg-[#E55B05] transition-all disabled:opacity-80">
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -190,7 +189,7 @@ export function ForgotPasswordView({ onBackToLogin, onSuccess }) {
                                 value={digit}
                                 onChange={(e) => handleOtpChange(index, e.target.value)}
                                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                className="w-12 h-14 text-center text-xl font-bold rounded-xl border-input focus:border-[#FA6D16] transition-all p-0"
+                                className="w-12 h-14 text-center text-xl font-bold rounded-xl border-input focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0 transition-all p-0"
                             />
                         ))}
                     </div>
@@ -213,8 +212,7 @@ export function ForgotPasswordView({ onBackToLogin, onSuccess }) {
                     <div className="relative pb-5">
                         <Label htmlFor="new-password" className="text-[13px] font-semibold pl-1">New Password</Label>
                         <div className="relative">
-                            <Input id="new-password" type={showPassword ? "text" : "password"} value={passwords.new} onChange={(e) => { setPasswords({ ...passwords, new: e.target.value }); setErrors({}); }} placeholder="••••••••" className={`h-11 rounded-2xl pr-10 transition-all ${errors.new ? 'border-red-500' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16]'}`} />
-                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+                            <Input id="new-password" type={showPassword ? "text" : "password"} value={passwords.new} onChange={(e) => { setPasswords({ ...passwords, new: e.target.value }); setErrors({}); }} placeholder="••••••••" className={`h-11 rounded-2xl pr-10 transition-all ${errors.new ? 'border-red-500 focus-visible:ring-1 focus-visible:ring-red-500 focus-visible:ring-offset-0' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0'}`} />                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                             </button>
                         </div>
@@ -224,8 +222,7 @@ export function ForgotPasswordView({ onBackToLogin, onSuccess }) {
                     <div className="relative pb-6">
                         <Label htmlFor="confirm-password" className="text-[13px] font-semibold pl-1">Confirm Password</Label>
                         <div className="relative">
-                            <Input id="confirm-password" type={showConfirmPassword ? "text" : "password"} value={passwords.confirm} onChange={(e) => { setPasswords({ ...passwords, confirm: e.target.value }); setErrors({}); }} placeholder="••••••••" className={`h-11 rounded-2xl pr-10 transition-all ${errors.confirm ? 'border-red-500' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16]'}`} />
-                            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+                            <Input id="confirm-password" type={showConfirmPassword ? "text" : "password"} value={passwords.confirm} onChange={(e) => { setPasswords({ ...passwords, confirm: e.target.value }); setErrors({}); }} placeholder="••••••••" className={`h-11 rounded-2xl pr-10 transition-all ${errors.confirm ? 'border-red-500 focus-visible:ring-1 focus-visible:ring-red-500 focus-visible:ring-offset-0' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0'}`} />                            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                 {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                             </button>
                         </div>

@@ -164,12 +164,12 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
                                     <div className="overflow-hidden">
                                         <div className="relative pb-5">
                                             <Label htmlFor="name" className="text-[13px] font-semibold pl-1">Name</Label>
-                                            <Input id="name" value={formData.name} onChange={handleChange} placeholder="John Doe" className={`h-11 rounded-2xl transition-all ${errors.name ? 'border-red-500' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16]'}`} />
+                                            <Input id="name" value={formData.name} onChange={handleChange} placeholder="John Doe" className={`h-11 rounded-2xl transition-all ${errors.name ? 'border-red-500 focus-visible:ring-1 focus-visible:ring-red-500 focus-visible:ring-offset-0' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0'}`} />
                                             {errors.name && <span className="absolute bottom-0.5 left-1 text-[11px] text-red-500">{errors.name}</span>}
                                         </div>
                                         <div className="relative pb-5">
                                             <Label htmlFor="mobile" className="text-[13px] font-semibold pl-1">Mobile No.</Label>
-                                            <Input id="mobile" type="tel" value={formData.mobile} onChange={handleChange} placeholder="+1 (555) 000-0000" className={`h-11 rounded-2xl transition-all ${errors.mobile ? 'border-red-500' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16]'}`} />
+                                            <Input id="mobile" type="tel" value={formData.mobile} onChange={handleChange} placeholder="+1 (555) 000-0000" className={`h-11 rounded-2xl transition-all ${errors.mobile ? 'border-red-500 focus-visible:ring-1 focus-visible:ring-red-500 focus-visible:ring-offset-0' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0'}`} />
                                             {errors.mobile && <span className="absolute bottom-0.5 left-1 text-[11px] text-red-500">{errors.mobile}</span>}
                                         </div>
                                     </div>
@@ -177,14 +177,14 @@ export function LoginModal({ trigger, open: controlledOpen, onOpenChange: setCon
 
                                 <div className="relative pb-5">
                                     <Label htmlFor="email" className="text-[13px] font-semibold pl-1">Email</Label>
-                                    <Input id="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email address" className={`h-11 rounded-2xl transition-all ${errors.email ? 'border-red-500' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16]'}`} />
+                                    <Input id="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email address" className={`h-11 rounded-2xl transition-all ${errors.email ? 'border-red-500 focus-visible:ring-1 focus-visible:ring-red-500 focus-visible:ring-offset-0' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0'}`} />
                                     {errors.email && <span className="absolute bottom-0.5 left-1 text-[11px] text-red-500">{errors.email}</span>}
                                 </div>
 
                                 <div className="relative pb-5">
                                     <Label htmlFor="password" className="text-[13px] font-semibold pl-1">Password</Label>
                                     <div className="relative">
-                                        <Input id="password" type={showPassword ? "text" : "password"} value={formData.password} onChange={handleChange} placeholder="Password" className={`h-11 rounded-2xl pr-10 transition-all ${errors.password ? 'border-red-500' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16]'}`} />
+                                        <Input id="password" type={showPassword ? "text" : "password"} value={formData.password} onChange={handleChange} placeholder="Password" className={`h-11 rounded-2xl pr-10 transition-all ${errors.password ? 'border-red-500 focus-visible:ring-1 focus-visible:ring-red-500 focus-visible:ring-offset-0' : 'hover:border-[#FA6D16]/50 focus:border-[#FA6D16] focus-visible:ring-1 focus-visible:ring-[#FA6D16] focus-visible:ring-offset-0'}`} />
                                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                         </button>
