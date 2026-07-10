@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import * as Icons from "lucide-react";
-import { ArrowRight, Star, Map, Plus, Trash2, ImageOff } from "lucide-react";
+import { ArrowRight, Star, Map, Plus, Trash2, ImageOff, Check, X } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { InquiryDialog } from "../../components/site/InquiryDialog";
 import { InlineEditor } from "../../components/admin/InlineEditor";
@@ -41,6 +41,164 @@ const HeroContentSkeleton = () => (
         </div>
     </div>
 );
+
+// --- Auto-detecting Gallery Media (Image or Video) ---
+// Moved to module scope so it's not redefined (and reset) on every Home render.
+const GalleryMedia = ({ src, className, onError }) => {
+    const [mediaType, setMediaType] = useState(null); // 'video' | 'image' | 'detecting'
+
+    useEffect(() => {
+        if (!src) { setMediaType(null); return; }
+
+        const explicitImageExt = /\.(jpe?g|png|gif|webp|svg|avif|bmp)(\?.*)?$/i;
+        const explicitVideoExt = /\.(mp4|webm|ogg|ogv|mov|m4v|mkv|avi|3gp|flv|wmv)(\?.*)?$/i;
+
+        if (explicitImageExt.test(src)) { setMediaType('image'); return; }
+        if (explicitVideoExt.test(src)) { setMediaType('video'); return; }
+
+        // No recognizable extension (Cloudinary/S3/Drive/signed URLs etc.)
+        // Probe it by actually trying to load it as a video.
+        setMediaType('detecting');
+        let cancelled = false;
+        const probe = document.createElement('video');
+        probe.muted = true;
+        probe.preload = 'metadata';
+        probe.src = src;
+
+        const onOk = () => { if (!cancelled) setMediaType('video'); cleanup(); };
+        const onFail = () => { if (!cancelled) setMediaType('image'); cleanup(); };
+        const cleanup = () => {
+            probe.removeEventListener('loadedmetadata', onOk);
+            probe.removeEventListener('error', onFail);
+            probe.src = '';
+        };
+
+        probe.addEventListener('loadedmetadata', onOk);
+        probe.addEventListener('error', onFail);
+
+        return () => { cancelled = true; cleanup(); };
+    }, [src]);
+
+    if (mediaType === 'video') {
+        return (
+            <video
+                key={src}
+                src={src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className={`${className} object-cover`}
+                onError={() => setMediaType('image')}
+            />
+        );
+    }
+
+    if (mediaType === 'image') {
+        return (
+            <img
+                key={src}
+                src={src}
+                alt="Gallery snippet"
+                onError={onError}
+                loading="lazy"
+                className={`${className} object-cover`}
+            />
+        );
+    }
+
+    // brief detection window
+    return <div className={`${className} bg-muted animate-pulse`} />;
+};
+
+// --- Live URL Editor with instant preview + explicit "lock in" save ---
+// Typing/pasting updates the preview immediately via onLivePreview.
+// Nothing is persisted until the admin clicks the check (✓) button.
+const GalleryLiveEditor = ({ initialValue, onSave, onLivePreview }) => {
+    const [val, setVal] = useState(initialValue);
+
+    useEffect(() => { setVal(initialValue); }, [initialValue]);
+
+    const handleChange = (e) => {
+        const newVal = e.target.value;
+        setVal(newVal);
+        onLivePreview(newVal); // instant preview, not yet saved
+    };
+
+    const handleSave = () => {
+        if (val !== initialValue) onSave(val);
+    };
+
+    const handleCancel = () => {
+        setVal(initialValue);
+        onLivePreview(initialValue);
+    };
+
+    const isDirty = val !== initialValue;
+
+    return (
+        <div className="flex items-center gap-1 bg-black/60 rounded-lg border border-white/20 p-1 w-full transition-colors focus-within:border-primary/50">
+            <input
+                className="bg-transparent text-white text-xs w-full outline-none px-1.5 py-1 placeholder:text-white/40"
+                value={val}
+                onChange={handleChange}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel(); }}
+                placeholder="Paste image or video URL..."
+            />
+            {isDirty && (
+                <div className="flex items-center gap-1 pr-0.5 animate-in fade-in zoom-in duration-200">
+                    <button
+                        onClick={handleSave}
+                        className="text-green-400 hover:scale-110 transition-transform p-1 bg-green-400/10 rounded"
+                        title="Lock in this URL"
+                    >
+                        <Check size={14} />
+                    </button>
+                    <button
+                        onClick={handleCancel}
+                        className="text-red-400 hover:scale-110 transition-transform p-1 bg-red-400/10 rounded"
+                        title="Cancel"
+                    >
+                        <X size={14} />
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// --- Gallery Grid Item: wires the live editor to the live preview ---
+const GalleryItem = ({ src, idx, isFirst, isSuperAdmin, isMobile, onSave, onDelete, onImageError }) => {
+    const [livePreviewSrc, setLivePreviewSrc] = useState(src);
+
+    useEffect(() => { setLivePreviewSrc(src); }, [src]);
+
+    return (
+        <div className={`relative overflow-hidden rounded-2xl group border border-border/40 shadow-xs ${isFirst ? 'md:col-span-2 md:row-span-2' : ''}`}>
+            <div className="aspect-4/3 md:aspect-auto md:h-full w-full bg-muted relative">
+                <GalleryMedia
+                    src={livePreviewSrc}
+                    onError={onImageError}
+                    className="h-full w-full transition-transform duration-700 group-hover:scale-105"
+                />
+                {isSuperAdmin && !isMobile && (
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex flex-col justify-center items-center gap-3 p-3">
+                        <div className="w-11/12 max-w-xs">
+                            <GalleryLiveEditor
+                                initialValue={src}
+                                onLivePreview={setLivePreviewSrc}
+                                onSave={(val) => onSave(idx, val)}
+                            />
+                        </div>
+                        <Button variant="destructive" size="sm" onClick={() => onDelete(idx)}>
+                            <Trash2 className="h-4 w-4 mr-2" /> Delete
+                        </Button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 // --- Default Configuration ---
 const defaultSettings = {
@@ -180,8 +338,13 @@ export default function Home() {
         setSettings(prev => ({ ...prev, galleryPreview: newArray }));
         await handleCMSFieldSave("galleryPreview", newArray);
     };
-    const handleAddGalleryImage = () => updateGalleryArray([...settings.galleryPreview, "https://placehold.co/800x600?text=Paste+Image+URL"]);
+    const handleAddGalleryImage = () => updateGalleryArray([...settings.galleryPreview, "https://placehold.co/800x600?text=Paste+Image+or+Video+URL"]);
     const handleDeleteGalleryImage = (index) => updateGalleryArray(settings.galleryPreview.filter((_, i) => i !== index));
+    const handleUpdateGalleryImage = (index, value) => {
+        const newArray = [...settings.galleryPreview];
+        newArray[index] = value;
+        updateGalleryArray(newArray);
+    };
 
     const handleAddTestimonial = () => setTestimonials([...testimonials, { _id: Date.now().toString(), rating: 5, message: "New review message", name: "Name", location: "City" }]);
     const handleDeleteTestimonial = (id) => setTestimonials(testimonials.filter(t => t._id !== id));
@@ -332,7 +495,7 @@ export default function Home() {
                             <div className="flex gap-4">
                                 {isSuperAdmin && !isMobile && (
                                     <Button onClick={handleAddGalleryImage} variant="outline" className="font-bold rounded-full">
-                                        <Plus className="mr-2 h-4 w-4" /> Add Image
+                                        <Plus className="mr-2 h-4 w-4" /> Add Media
                                     </Button>
                                 )}
                                 <Link to="/gallery">
@@ -346,34 +509,17 @@ export default function Home() {
 
                     <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
                         {settings.galleryPreview.map((src, idx) => (
-                            <div key={idx} className={`relative overflow-hidden rounded-2xl group border border-border/40 shadow-xs ${idx === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
-                                <div className="aspect-4/3 md:aspect-auto md:h-full w-full bg-muted relative">
-                                    <img
-                                        src={src}
-                                        alt={`Gallery snippet ${idx + 1}`}
-                                        onError={handleImageError}
-                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                        loading="lazy"
-                                    />
-                                    {isSuperAdmin && !isMobile && (
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex flex-col justify-center items-center gap-3">
-                                            <div className="bg-white p-2 rounded text-black w-11/12 max-w-xs shadow-lg">
-                                                <InlineEditor
-                                                    value={src}
-                                                    onSave={(val) => {
-                                                        const newArr = [...settings.galleryPreview];
-                                                        newArr[idx] = val;
-                                                        updateGalleryArray(newArr);
-                                                    }}
-                                                />
-                                            </div>
-                                            <Button variant="destructive" size="sm" onClick={() => handleDeleteGalleryImage(idx)}>
-                                                <Trash2 className="h-4 w-4 mr-2" /> Delete
-                                            </Button>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <GalleryItem
+                                key={idx}
+                                src={src}
+                                idx={idx}
+                                isFirst={idx === 0}
+                                isSuperAdmin={isSuperAdmin}
+                                isMobile={isMobile}
+                                onSave={handleUpdateGalleryImage}
+                                onDelete={handleDeleteGalleryImage}
+                                onImageError={handleImageError}
+                            />
                         ))}
                         {isSuperAdmin && !isMobile && settings.galleryPreview.length === 0 && (
                             <div onClick={handleAddGalleryImage} className="aspect-4/3 rounded-2xl border-2 border-dashed border-border/60 bg-transparent flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors opacity-60 hover:opacity-100">
